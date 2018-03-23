@@ -17,8 +17,8 @@ service.interceptors.request.use(
     //   config.data = qs.stringify(config.data);
     // }
     if (store.getters.token) {
-      config.headers['token'] = store.getters.token;
-      config.headers['userId'] = store.getters.userId;
+      config.headers['token'] = store.getters.token || 'abc';
+      config.headers['userId'] = store.getters.userId || 36100;
     }
     return config
   },

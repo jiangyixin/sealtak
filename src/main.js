@@ -7,8 +7,12 @@ import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.config.productionTip = false
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
+
+Vue.component('icon', Icon)
 Vue.use(ElementUI)
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
