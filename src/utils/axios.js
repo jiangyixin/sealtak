@@ -7,7 +7,7 @@ import { Message, MessageBox } from 'element-ui'
 const service = axios.create({
   baseURL: process.env.BASE_API, // api的base_url
   timeout: 1200000 // 请求超时时间
-});
+})
 
 service.interceptors.request.use(
   config => {
@@ -16,10 +16,8 @@ service.interceptors.request.use(
     // if(config.method  === 'post'){
     //   config.data = qs.stringify(config.data);
     // }
-    if (store.getters.token) {
-      config.headers['token'] = store.getters.token || 'abc';
-      config.headers['userId'] = store.getters.userId || 36100;
-    }
+    config.headers['token'] = store.getters.token || 'abc'
+    config.headers['userId'] = store.getters.userId || 36100
     return config
   },
   error => {
@@ -32,8 +30,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   res => {
     if (!res.data || !res.data.code) {
-      console.log(res);
-      return res.data;
+      console.log(res)
+      return res.data
     }
     // if ([401, 402].indexOf(res.data.code) !== -1) {
     //
@@ -45,20 +43,20 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-      return Promise.reject(res.data);
+      return Promise.reject(res.data)
     }
-    return res.data.res;
+    return res.data.res
   },
   error => {
-    console.log(error);
+    console.log(error)
     // 网络异常
     Message({
       message: error.message || '网络异常',
       type: 'error',
       duration: 5 * 1000
     })
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 )
 
-export default axios
+export default service

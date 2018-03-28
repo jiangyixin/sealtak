@@ -1,9 +1,9 @@
 <template>
-  <el-aside width="70px" class="toolbar">
-    <router-link :to="{name: 'Index'}" class="bar-item">
+  <el-aside width="70px" class="toolbar" style="height: 100%; float: left;">
+    <router-link to="#chat" class="bar-item">
       <icon name="weixin"></icon>
     </router-link>
-    <router-link :to="{name: 'Info'}" class="bar-item">
+    <router-link to="#contacts" class="bar-item">
       <icon name="address-book-o"></icon>
     </router-link>
   </el-aside>

@@ -1,9 +1,9 @@
 import axios from '../utils/axios'
 
 
-export function getRCToken () {
+export function getMyGroups () {
   return axios({
-    url: `/users/token`,
+    url: `/groups/list/self`,
     method: 'get'
   })
 }

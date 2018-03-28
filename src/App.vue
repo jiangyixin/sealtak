@@ -1,6 +1,9 @@
 <template>
   <el-container id="app">
-    <Sidebar></Sidebar>
+    <el-aside width="400px" style="overflow: hidden;">
+      <Sidebar></Sidebar>
+      <Contacts></Contacts>
+    </el-aside>
     <el-main>
       <router-view/>
     </el-main>
@@ -8,11 +11,47 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import Sidebar from './components/Sidebar.vue'
+  import Contacts from './components/contacts/Index.vue'
+  import { init } from './api/rcInit'
+
   export default {
     name: 'App',
     components: {
-        Sidebar
+        Sidebar, Contacts
+    },
+    computed: {
+      ...mapGetters(['rcToken'])
+    },
+    methods: {
+
+    },
+    created () {
+      this.$store.dispatch('getUserInfo', {userId: 36100}).then(resp => {
+
+      })
+      this.$store.dispatch('getRCToken').then(resp => {
+        let that = this
+        let params = {
+          appKey : process.env.APP_KEY,
+          token : this.rcToken
+        }
+        init(params, {
+          getInstance: (instance) => {
+
+          },
+          receiveNewMessage: (message) => {
+            console.log(message)
+            if (message) {
+
+            }
+          },
+          getCurrentUser: ({userId}) => {
+
+          }
+        })
+      })
     }
   }
 </script>

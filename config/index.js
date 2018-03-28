@@ -15,7 +15,7 @@ module.exports = {
         target: 'http://api.btclass.net/im',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '^/api': '/'
         }
       }
     },

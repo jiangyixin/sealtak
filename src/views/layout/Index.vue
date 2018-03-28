@@ -1,8 +1,9 @@
 <template>
   <el-container>
+    <el-aside></el-aside>
     <contacts></contacts>
     <el-main>
-      hahaha
+
     </el-main>
   </el-container>
 </template>

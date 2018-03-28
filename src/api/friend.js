@@ -1,10 +1,23 @@
 import axios from '../utils/axios'
 
 
-export function getFriend () {
+export function getMyFriends (params) {
   return axios({
-    url: `/friend`,
-    method: 'get'
+    url: `/friends`,
+    method: 'get',
+    params: {
+      applyStatus: params.applyStatus
+    }
+  })
+}
+
+export function getUserInfo (params) {
+  return axios({
+    url: `/users/${params.userId}/profile`,
+    method: 'get',
+    params: {
+      groupId: params.groupId
+    }
   })
 }
 
