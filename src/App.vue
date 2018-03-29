@@ -2,7 +2,7 @@
   <el-container id="app">
     <el-aside width="400px" style="overflow: hidden;">
       <Sidebar></Sidebar>
-      <Contacts></Contacts>
+      <component :is="curSidebar"></component>
     </el-aside>
     <el-main>
       <router-view/>
@@ -14,15 +14,17 @@
   import { mapGetters } from 'vuex'
   import Sidebar from './components/Sidebar.vue'
   import Contacts from './components/contacts/Index.vue'
+  import Conversations from './components/conversations/Index.vue'
   import { init } from './api/rcInit'
+  import { getConversations } from './api/rcMsg'
 
   export default {
     name: 'App',
     components: {
-        Sidebar, Contacts
+        Sidebar, Contacts, Conversations
     },
     computed: {
-      ...mapGetters(['rcToken'])
+      ...mapGetters(['rcToken', 'curSidebar'])
     },
     methods: {
 
@@ -32,14 +34,15 @@
 
       })
       this.$store.dispatch('getRCToken').then(resp => {
-        let that = this
         let params = {
           appKey : process.env.APP_KEY,
           token : this.rcToken
         }
         init(params, {
           getInstance: (instance) => {
-
+            getConversations().then(list => {
+              this.$store.commit('SET_CONVERSATIONS', list)
+            })
           },
           receiveNewMessage: (message) => {
             console.log(message)

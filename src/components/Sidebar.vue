@@ -1,23 +1,32 @@
 <template>
   <el-aside width="70px" class="toolbar" style="height: 100%; float: left;">
-    <router-link to="#chat" class="bar-item">
+    <div @click="toggleSidebar('Conversations')" class="bar-item" :class="[curSidebar == 'Conversations' ? 'active' : '']">
       <icon name="weixin"></icon>
-    </router-link>
-    <router-link to="#contacts" class="bar-item">
+    </div>
+    <div @click="toggleSidebar('Contacts')" class="bar-item" :class="[curSidebar == 'Contacts' ? 'active' : '']">
       <icon name="address-book-o"></icon>
-    </router-link>
+    </div>
   </el-aside>
 </template>
 
 <script>
-export default {
-  name: 'Sidebar',
-  data () {
-    return {
+  import { mapGetters } from 'vuex'
+  export default {
+    name: 'Sidebar',
+    computed: {
+      ...mapGetters(['curSidebar'])
+    },
+    data () {
+      return {
 
+      }
+    },
+    methods: {
+      toggleSidebar (curSidebar) {
+        this.$store.commit('SET_CUR_SIDEBAR', curSidebar)
+      }
     }
   }
-}
 </script>
 
 <style scoped rel="stylesheet/scss" lang="scss">
@@ -31,7 +40,7 @@ export default {
       text-align: center;
       height: 70px;
       line-height: 75px;
-      &.router-link-exact-active {
+      &.active {
         background-color: #2884ca;
       }
     }

@@ -42,7 +42,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getUserInfo } from '../../api/friend'
-  import { getHistoryMsg, senMsg } from '../../api/rcMsg'
+  import { getHistoryMsg, sendMsg } from '../../api/rcMsg'
   let moment = require('moment')
 
   export default {
@@ -74,7 +74,7 @@
       let initInterval = setInterval(function () {
         if (that.initStatus) {
           clearInterval(initInterval)
-          getHistoryMsg('private', that.userId, 0, 20, function (list, hasMsg) {
+          getHistoryMsg(1, that.userId, 0, 20).then(([list, hasMsg]) => {
             console.log(list, hasMsg)
             that.historyMsg = list
             that.hasMsg = hasMsg
@@ -93,16 +93,15 @@
         })
       },
       sendMessage () {
-        let that = this
         let msg = {
           content: this.replyText.trim(),
           extra: ''
         }
         if (msg.content) {
-          senMsg('private', this.userId, msg, function (result) {
-            that.historyMsg.push(result)
-            that.replyText = ''
-            that.refreshChatroom()
+          sendMsg(1, this.userId, msg).then((message) => {
+            this.historyMsg.push(message)
+            this.replyText = ''
+            this.refreshChatroom()
           })
         }
       },

@@ -5,7 +5,8 @@ const user = {
   state: {
     token: '',
     userId: 0,
-    userInfo: {}
+    userInfo: {},
+    curSidebar: ''
   },
   mutations: {
     SET_TOKEN: (state, token) => {
@@ -16,6 +17,11 @@ const user = {
     },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
+    },
+    SET_CUR_SIDEBAR: (state, sidebar) => {
+      let key = 'curSidebar'
+      cache.set(key, sidebar)
+      state.curSidebar = sidebar
     }
   },
   actions: {
@@ -29,7 +35,11 @@ const user = {
   getters: {
     token: state => state.token,
     userId: state => state.userId,
-    userInfo: state => state.userInfo
+    userInfo: state => state.userInfo,
+    curSidebar: state => {
+      let key = 'curSidebar'
+      return state.curSidebar || cache.get(key) || 'Conversations'
+    }
   }
 }
 

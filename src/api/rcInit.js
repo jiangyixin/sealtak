@@ -1,6 +1,7 @@
 import store from '../store'
+import { getConversations, getTotalUnreadCount } from './rcMsg'
 
-export function init(params, callbacks, modules){
+export function init(params, callbacks, modules) {
   var appKey = params.appKey;
   var token = params.token;
   var navi = params.navi || "";

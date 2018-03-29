@@ -49,7 +49,7 @@
         })
       },
       toUserChat (userId) {
-        this.$router.push({name: 'UserChat', params: {userId: userId}})
+        this.$router.push({name: 'UserChat', params: {userId: userId + ''}})
       }
     },
     watch: {
