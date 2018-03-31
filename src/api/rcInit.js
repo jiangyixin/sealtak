@@ -95,8 +95,6 @@ export function init(params, callbacks, modules) {
         case RongIMClient.MessageType.VoiceMessage:
         case RongIMClient.MessageType.ImageMessage:
         case RongIMClient.MessageType.RichContentMessage:
-          store.commit('UPDATE_UNREAD_COUNT', 1)
-          store.commit('UPDATE_CONVERSATIONS', message)
           break;
         case RongIMClient.MessageType.DiscussionNotificationMessage:
           // message.content.extension => 讨论组中的人员。

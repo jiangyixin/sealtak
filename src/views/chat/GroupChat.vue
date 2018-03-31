@@ -46,11 +46,11 @@
   let moment = require('moment')
 
   export default {
-    name: 'UserChat',
+    name: 'GroupChat',
     components: {
 
     },
-    props: ['userId'],
+    props: ['groupId'],
     data () {
       return {
         friendInfo: {},
@@ -60,21 +60,21 @@
       }
     },
     computed: {
-      ...mapGetters(['initStatus', 'userInfo', 'curTargetId', 'curHistories']),
+      ...mapGetters(['initStatus', 'userInfo']),
       chatUsers () {
         return {
-          [this.userInfo['userId']]: this.userInfo,
-          [this.friendInfo['userId']]: this.friendInfo
+          [this.userInfo['groupId']]: this.userInfo,
+          [this.friendInfo['groupId']]: this.friendInfo
         }
       }
     },
     created () {
-      this.resetChatInfo()
+      this.fetchFriendInfo()
       let that = this
       let initInterval = setInterval(function () {
         if (that.initStatus) {
           clearInterval(initInterval)
-          getHistoryMsg(1, that.userId, 0, 20).then(([list, hasMsg]) => {
+          getHistoryMsg(1, that.groupId, 0, 20).then(([list, hasMsg]) => {
             console.log(list, hasMsg)
             that.historyMsg = list
             that.hasMsg = hasMsg
@@ -84,14 +84,13 @@
       }, 500)
     },
     methods: {
-      resetChatInfo () {
+      fetchFriendInfo () {
         let params = {
-          userId: this.userId
+          groupId: this.groupId
         }
         getUserInfo(params).then(data => {
           this.friendInfo = data
         })
-        this.$store.commit('SET_CUR_TARGET_ID', this.userId)
       },
       sendMessage () {
         let msg = {
@@ -99,7 +98,7 @@
           extra: ''
         }
         if (msg.content) {
-          sendMsg(1, this.userId, msg).then((message) => {
+          sendMsg(1, this.groupId, msg).then((message) => {
             this.historyMsg.push(message)
             this.replyText = ''
             this.refreshChatroom()
@@ -131,8 +130,8 @@
       }
     },
     watch: {
-      userId (val) {
-        this.resetChatInfo()
+      groupId (val) {
+        this.fetchFriendInfo()
       }
     }
   }

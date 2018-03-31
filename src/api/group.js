@@ -8,3 +8,17 @@ export function getMyGroups () {
   })
 }
 
+export function getGroupInfo(groupId) {
+  return axios({
+    url: `/groups/${groupId}/info`,
+    method: 'get'
+  })
+}
+
+export function getGroupMembers(groupId) {
+  return axios({
+    url: `/groups/${groupId}/members`,
+    method: 'get'
+  })
+}
+

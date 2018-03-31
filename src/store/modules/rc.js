@@ -6,7 +6,9 @@ const rc = {
     rcToken: '',
     initStatus: false,
     unreadCount: 0,
-    conversations: {}
+    conversations: [],
+    curTargetId: '',
+    curHistories: []
   },
   mutations: {
     SET_RC_TOKEN: (state, rcToken) => {
@@ -25,7 +27,34 @@ const rc = {
       state.conversations = conversations
     },
     UPDATE_CONVERSATIONS: (state, message) => {
-
+      state.conversations.push(message)
+    },
+    SET_CUR_TARGET_ID: (state, targetId) => {
+      state.curTargetId = targetId
+    },
+    SET_CUR_HISTORIES: (state, histories) => {
+      state.curHistories = histories
+    },
+    RECEIVE_NEW_MESSAGE: (state, message) => {
+      for (let i in state.conversations) {
+        if (state.conversations[i].targetId == message.targetId) {
+          state.conversations[i].latestMessage = message
+          state.conversations[i].sentTime = message.sentTime
+          state.conversations[i].sentStatus = message.sentStatus
+          state.conversations[i].objectName = message.objectName
+          state.conversations[i].notificationStatus = message.sentStatus
+          state.conversations[i].latestMessageId = message.messageId
+          if (state.conversations[i].targetId == state.curTargetId) {
+            state.conversations[i].unreadMessageCount = 0
+          } else {
+            state.conversations[i].unreadMessageCount++
+          }
+          break;
+        }
+      }
+      if (state.curTargetId == message.targetId) {
+        state.curHistories.push(message)
+      }
     }
   },
   actions: {
@@ -46,7 +75,8 @@ const rc = {
     rcToken: state => state.rcToken,
     initStatus: state => state.initStatus,
     unreadCount: state => state.unreadCount,
-    conversations: state => state.conversations
+    conversations: state => state.conversations,
+    curTargetId: state => state.curTargetId
   }
 }
 

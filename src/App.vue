@@ -16,7 +16,7 @@
   import Contacts from './components/contacts/Index.vue'
   import Conversations from './components/conversations/Index.vue'
   import { init } from './api/rcInit'
-  import { getConversations } from './api/rcMsg'
+  import { getConversations, getTotalUnreadCount } from './api/rcMsg'
 
   export default {
     name: 'App',
@@ -34,6 +34,7 @@
 
       })
       this.$store.dispatch('getRCToken').then(resp => {
+        let that = this
         let params = {
           appKey : process.env.APP_KEY,
           token : this.rcToken
@@ -43,12 +44,14 @@
             getConversations().then(list => {
               this.$store.commit('SET_CONVERSATIONS', list)
             })
+            getTotalUnreadCount().then(count => {
+              this.$store.commit('SET_UNREAD_COUNT', count)
+            })
           },
           receiveNewMessage: (message) => {
             console.log(message)
-            if (message) {
-
-            }
+            that.$store.commit('UPDATE_UNREAD_COUNT', 1)
+            that.$store.commit('RECEIVE_NEW_MESSAGE', message)
           },
           getCurrentUser: ({userId}) => {
 

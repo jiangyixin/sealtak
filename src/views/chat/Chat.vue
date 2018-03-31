@@ -9,9 +9,9 @@
           <li v-for="(msg, index) in historyMsg" :key="index" class="message-item">
             <div class="msg-date">{{ msg.sentTime|humanizeTime(historyMsg[index-1] && historyMsg[index-1].sentTime) }}</div>
             <div class="msg-card">
-              <div class="face"><img :src="chatUsers[msg.senderUserId].headimgurl" alt=""></div>
+              <div class="face"><img :src="chatMembers[msg.senderUserId].headimgurl" alt=""></div>
               <div class="info">
-                <div class="name">{{ chatUsers[msg.senderUserId].nickname }}</div>
+                <div class="name">{{ chatMembers[msg.senderUserId].nickname }}</div>
                 <div class="msg">
                   <div class="text-msg" v-if="msg.content.messageName == 'TextMessage'">{{ msg.content.content }}</div>
                   <img class="image-msg" v-if="msg.content.messageName == 'ImageMessage'" :src="msg.content.imageUri" alt="">
@@ -25,7 +25,6 @@
     <el-footer height="100px">
       <div class="input-box">
         <div class="message-form">
-          <!--<pre v-text="replyText" ref="reply" @input="replyText = $event.target.innerText" class="text-area" contenteditable="true" placehlder="请输入文字"></pre>-->
           <el-input
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }"
@@ -42,15 +41,16 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getUserInfo } from '../../api/friend'
+  import { getGroupMembers } from '../../api/group'
   import { getHistoryMsg, sendMsg } from '../../api/rcMsg'
   let moment = require('moment')
 
   export default {
-    name: 'UserChat',
+    name: 'Chat',
     components: {
 
     },
-    props: ['userId'],
+    props: ['conversationType', 'targetId'],
     data () {
       return {
         friendInfo: {},
@@ -60,38 +60,75 @@
       }
     },
     computed: {
-      ...mapGetters(['initStatus', 'userInfo', 'curTargetId', 'curHistories']),
-      chatUsers () {
-        return {
-          [this.userInfo['userId']]: this.userInfo,
-          [this.friendInfo['userId']]: this.friendInfo
+      ...mapGetters(['initStatus', 'userInfo']),
+      chatMembers () {
+        let chatMembers = {}
+        if (this.conversationType == 1) {
+          let params = {
+            userId: this.targetId
+          }
+          getUserInfo(params).then(data => {
+            chatMembers[data.userId] = {
+              nickname: data.nickname,
+              headimgurl: data.headimgurl
+            }
+          })
+        } else if (this.conversationType == 3) {
+          getGroupMembers(this.targetId).then(data => {
+            for (let member of data) {
+              chatMembers[member.userId] = {
+                nickname: member.groupName,
+                headimgurl: member.groupHeadimgurl
+              }
+            }
+          })
         }
+
+        chatMembers[this.userInfo.userId] = {
+          nickname: this.userInfo.nickname,
+          headimgurl: this.userInfo.headimgurl
+        }
+
+        return chatMembers
       }
     },
     created () {
-      this.resetChatInfo()
+      this.fetchChatMembers()
       let that = this
       let initInterval = setInterval(function () {
         if (that.initStatus) {
           clearInterval(initInterval)
-          getHistoryMsg(1, that.userId, 0, 20).then(([list, hasMsg]) => {
-            console.log(list, hasMsg)
-            that.historyMsg = list
-            that.hasMsg = hasMsg
-            that.refreshChatroom()
-          })
+          that.fetchHistoryMsg()
         }
       }, 500)
     },
     methods: {
-      resetChatInfo () {
-        let params = {
-          userId: this.userId
+      fetchChatMembers () {
+        if (this.conversationType == 1) {
+          let params = {
+            userId: this.targetId
+          }
+          getUserInfo(params).then(data => {
+            this.chatMembers[data.userId] = {
+              nickname: data.nickname,
+              headimgurl: data.headimgurl
+            }
+          })
+        } else if (this.conversationType == 3) {
+          getGroupMembers(this.targetId).then(data => {
+            for (let member of data) {
+              this.chatMembers[member.userId] = {
+                nickname: member.groupName,
+                headimgurl: member.groupHeadimgurl
+              }
+            }
+          })
         }
-        getUserInfo(params).then(data => {
-          this.friendInfo = data
-        })
-        this.$store.commit('SET_CUR_TARGET_ID', this.userId)
+
+        this.chatMembers[this.userInfo.userId] = {
+          nickname: this.userInfo.nickname,
+          headimgurl: this.userInfo.headimgurl
+        }
       },
       sendMessage () {
         let msg = {
@@ -99,7 +136,7 @@
           extra: ''
         }
         if (msg.content) {
-          sendMsg(1, this.userId, msg).then((message) => {
+          sendMsg(this.conversationType, this.targetId, msg).then((message) => {
             this.historyMsg.push(message)
             this.replyText = ''
             this.refreshChatroom()
@@ -113,7 +150,12 @@
         }, 0)
       },
       fetchHistoryMsg () {
-
+        getHistoryMsg(this.conversationType, this.targetId, 0, 20).then(([list, hasMsg]) => {
+          console.log(list, hasMsg)
+          this.historyMsg = list
+          this.hasMsg = hasMsg
+          this.refreshChatroom()
+        })
       }
     },
     filters: {
@@ -131,8 +173,8 @@
       }
     },
     watch: {
-      userId (val) {
-        this.resetChatInfo()
+      targetId (val) {
+        this.fetchHistoryMsg()
       }
     }
   }
