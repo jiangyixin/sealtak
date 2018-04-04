@@ -11,13 +11,23 @@ const group = {
     },
     SET_OBJ_GROUPS: (state, groups) => {
       for (let group of groups) {
-        state.objGroups[group['groupId']] = group
+        if (state.objGroups[group['groupId']]) {
+          Object.assign(state.objGroups[group['groupId']], group)
+        } else {
+          state.objGroups[group['groupId']] = group
+        }
       }
     },
     SET_GROUP_MEMBERS: (state, [groupId, members]) => {
+      if (!state.objGroups[groupId]) {
+        state.objGroups[groupId] = {}
+      }
       state.objGroups[groupId].members = members
     },
     SET_GROUP_INFO: (state, [groupId, info]) => {
+      if (!state.objGroups[groupId]) {
+        state.objGroups[groupId] = {}
+      }
       state.objGroups[groupId].info = info
     }
   },
@@ -26,7 +36,7 @@ const group = {
       if (state.myGroups && state.myGroups.length) {
         return Promise.resolve(state.myGroups)
       } else {
-        getMyGroups().then(data => {
+        return getMyGroups().then(data => {
           commit('SET_MY_GROUPS', data)
           commit('SET_OBJ_GROUPS', data)
           return data
@@ -34,20 +44,20 @@ const group = {
       }
     },
     getGroupInfo({commit, state}, groupId) {
-      if (state.objGroups[params.groupId] && state.objGroups[params.groupId].info) {
-        return state.objGroups[params.groupId].info
+      if (state.objGroups[groupId] && state.objGroups[groupId].info) {
+        return state.objGroups[groupId].info
       } else {
-        getGroupInfo(groupId).then(data => {
-          commit('SET_GROUP_INFO', [groupId, data])
-          return data
+        return getGroupInfo(groupId).then(data => {
+          commit('SET_GROUP_INFO', [groupId, data[0]])
+          return data[0]
         })
       }
     },
     getGroupMembers({commit, state}, groupId) {
-      if (state.objGroups[groupId] && state.objGroups[params.groupId].members.length) {
+      if (state.objGroups[groupId] && state.objGroups[groupId].members) {
         return state.objGroups[groupId].members
       } else {
-        getGroupMembers(groupId).then(data => {
+        return getGroupMembers(groupId).then(data => {
           commit('SET_GROUP_MEMBERS', [groupId, data])
           return data
         })

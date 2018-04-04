@@ -1,5 +1,5 @@
 <template>
-  <el-aside width="315px" class="conversations-bar" style="height: 100%;">
+  <el-aside width="330px" class="conversations-bar" style="height: 100%;">
     <ul class="conversation-list">
       <li v-for="(conversation, index) in conversations" :key="index" class="conversation-item">
         <conversation-item :conversation="conversation"></conversation-item>

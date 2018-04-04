@@ -1,11 +1,12 @@
-import { getMyFriends } from '../../api/friend'
+import { getMyFriends, getFriendInfo } from '../../api/friend'
 import { groupByZh } from '../../utils/filter'
 
 const friend = {
   state: {
     myFriends: [],
     groupFriends: [],
-    objFriends: {}
+    objFriends: {},
+    friendInfo: {}
   },
   mutations: {
     SET_MY_FRIENDS: (state, friends) => {
@@ -18,6 +19,12 @@ const friend = {
       for (let friend of friends) {
         state.objFriends[friend.friendUserId] = friend
       }
+    },
+    UPDATE_OBJ_FRIENDS: (state, friend) => {
+      state.objFriends[friend.userId] = friend
+    },
+    SET_FRIEND_INFO: (state, friend) => {
+      state.friendInfo = friend
     }
   },
   actions: {
@@ -29,6 +36,17 @@ const friend = {
           commit('SET_MY_FRIENDS', data)
           commit('SET_GROUP_FRIENDS', data)
           commit('SET_OBJ_FRIENDS', data)
+          return data
+        })
+      }
+    },
+    getFriendInfo({commit, state}, params) {
+      if (state.objFriends[params.userId]) {
+        return Promise.resolve(state.objFriends[params.userId])
+      } else {
+        return getFriendInfo(params).then(data => {
+          commit('SET_FRIEND_INFO', data)
+          commit('UPDATE_OBJ_FRIENDS', data)
           return data
         })
       }

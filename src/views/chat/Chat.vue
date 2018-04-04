@@ -1,29 +1,38 @@
 <template>
   <el-container>
     <el-header>
-      <h3 class="title">{{ friendInfo.nickname }}</h3>
+      <h3 class="title">{{ chatInfo.title }}</h3>
     </el-header>
     <el-main id="chatroom">
       <div class="message-block">
         <ul class="message-list">
-          <li v-for="(msg, index) in historyMsg" :key="index" class="message-item">
-            <div class="msg-date">{{ msg.sentTime|humanizeTime(historyMsg[index-1] && historyMsg[index-1].sentTime) }}</div>
-            <div class="msg-card">
-              <div class="face"><img :src="chatMembers[msg.senderUserId].headimgurl" alt=""></div>
-              <div class="info">
-                <div class="name">{{ chatMembers[msg.senderUserId].nickname }}</div>
-                <div class="msg">
-                  <div class="text-msg" v-if="msg.content.messageName == 'TextMessage'">{{ msg.content.content }}</div>
-                  <img class="image-msg" v-if="msg.content.messageName == 'ImageMessage'" :src="msg.content.imageUri" alt="">
-                </div>
-              </div>
-            </div>
+          <li v-for="(msg, index) in curConversation.histories" :key="index" class="message-item">
+            <div class="msg-date">{{ msg.sentTime|humanizeTime(curConversation.histories[index-1] && curConversation.histories[index-1].sentTime) }}</div>
+            <Message v-if="chatMembers[msg.senderUserId]" :rcMessage="msg" :owner="chatMembers[msg.senderUserId]"></Message>
           </li>
         </ul>
       </div>
     </el-main>
-    <el-footer height="100px">
+    <el-footer height="130px">
       <div class="input-box">
+        <div class="operate-row">
+          <div class="operate-item">
+            <icon name="meh-o" v-popover:popover4></icon>
+            <emojo v-model="showEmojo"></emojo>
+            <el-popover
+              ref="popover4"
+              placement="right"
+              width="400"
+              trigger="click">
+              <el-table>
+                <el-table-column width="150" property="date" label="日期"></el-table-column>
+                <el-table-column width="100" property="name" label="姓名"></el-table-column>
+                <el-table-column width="300" property="address" label="地址"></el-table-column>
+              </el-table>
+            </el-popover>
+          </div>
+          <div class="operate-item"><icon name="image"></icon></div>
+        </div>
         <div class="message-form">
           <el-input
             type="textarea"
@@ -39,123 +48,152 @@
 </template>
 
 <script>
+  import Emojo from './Emoji.vue'
+  import Message from './Message.vue'
   import { mapGetters } from 'vuex'
-  import { getUserInfo } from '../../api/friend'
+  import { getFriendInfo } from '../../api/friend'
   import { getGroupMembers } from '../../api/group'
-  import { getHistoryMsg, sendMsg } from '../../api/rcMsg'
   let moment = require('moment')
 
   export default {
     name: 'Chat',
     components: {
-
+      Message, Emojo
     },
-    props: ['conversationType', 'targetId'],
+    props: {
+      conversationType: {
+        type: Number
+      },
+      targetId: {
+        type: String
+      }
+    },
     data () {
       return {
-        friendInfo: {},
+        $chatroom: null,
+        chatInfo: {
+          title: ''
+        },
         replyText: '',
-        historyMsg: [],
-        hasMsg: false
+        page: {
+          first: true,
+          timestrap: null,
+          limit: 20,
+          loading: false
+        },
+        chatMembers: {},
+        showEmojo: true
       }
     },
     computed: {
-      ...mapGetters(['initStatus', 'userInfo']),
-      chatMembers () {
-        let chatMembers = {}
-        if (this.conversationType == 1) {
-          let params = {
-            userId: this.targetId
-          }
-          getUserInfo(params).then(data => {
-            chatMembers[data.userId] = {
-              nickname: data.nickname,
-              headimgurl: data.headimgurl
-            }
-          })
-        } else if (this.conversationType == 3) {
-          getGroupMembers(this.targetId).then(data => {
-            for (let member of data) {
-              chatMembers[member.userId] = {
-                nickname: member.groupName,
-                headimgurl: member.groupHeadimgurl
-              }
-            }
-          })
-        }
-
-        chatMembers[this.userInfo.userId] = {
-          nickname: this.userInfo.nickname,
-          headimgurl: this.userInfo.headimgurl
-        }
-
-        return chatMembers
-      }
+      ...mapGetters(['initStatus', 'userInfo', 'curConversation'])
     },
     created () {
+      this.page.first = true
+      let conversation = {
+        conversationType: this.conversationType,
+        targetId: this.targetId,
+        hasMsg: true,
+        histories: []
+      }
+      this.$store.commit('SET_CUR_CONVERSATION', conversation)
       this.fetchChatMembers()
       let that = this
       let initInterval = setInterval(function () {
         if (that.initStatus) {
           clearInterval(initInterval)
-          that.fetchHistoryMsg()
+          that.fetchLatestMessage()
+          that.clearUnreadCount()
         }
       }, 500)
     },
+    mounted () {
+      this.$chatroom = document.getElementById('chatroom')
+      this.$chatroom.addEventListener('scroll', this.fetchHistoricalMessage)
+    },
     methods: {
+      clearUnreadCount () {
+        this.$store.dispatch('clearUnreadCount', this.curConversation).then()
+      },
       fetchChatMembers () {
         if (this.conversationType == 1) {
           let params = {
             userId: this.targetId
           }
-          getUserInfo(params).then(data => {
-            this.chatMembers[data.userId] = {
+          this.$store.dispatch('getFriendInfo', params).then(data => {
+            this.chatInfo.title = data.nickname
+            this.$set(this.chatMembers, this.targetId, {
               nickname: data.nickname,
-              headimgurl: data.headimgurl
-            }
+              headimgurl: data.headimgurl,
+              userId: data.userId
+            })
           })
         } else if (this.conversationType == 3) {
-          getGroupMembers(this.targetId).then(data => {
+          this.$store.dispatch('getGroupInfo', this.targetId).then(data => {
+            this.chatInfo.title = data.groupName
+          })
+          this.$store.dispatch('getGroupMembers', this.targetId).then(data => {
             for (let member of data) {
-              this.chatMembers[member.userId] = {
-                nickname: member.groupName,
-                headimgurl: member.groupHeadimgurl
-              }
+              this.$set(this.chatMembers, member.userId, {
+                userId: member.userId,
+                nickname: member.nickname,
+                headimgurl: member.headimgurl
+              })
             }
           })
         }
-
-        this.chatMembers[this.userInfo.userId] = {
-          nickname: this.userInfo.nickname,
-          headimgurl: this.userInfo.headimgurl
-        }
+        this.$store.dispatch('getUserProfile').then(data => {
+          this.$set(this.chatMembers, data.userId, {
+            userId: data.userId,
+            nickname: data.nickname,
+            headimgurl: data.headimgurl
+          })
+        })
       },
       sendMessage () {
-        let msg = {
-          content: this.replyText.trim(),
-          extra: ''
+        let conversation = {
+          conversationType: this.curConversation.conversationType,
+          targetId: this.curConversation.targetId,
+          message: {
+            content: this.replyText.trim(),
+            extra: ''
+          },
+          at: false
         }
-        if (msg.content) {
-          sendMsg(this.conversationType, this.targetId, msg).then((message) => {
-            this.historyMsg.push(message)
+
+        if (conversation.message.content) {
+          this.$store.dispatch('sendMsg', conversation).then(data => {
             this.replyText = ''
             this.refreshChatroom()
           })
         }
       },
       refreshChatroom () {
+        let that = this
         setTimeout(function () {
-          let $chatroom = document.getElementById('chatroom')
-          $chatroom.scrollTop = $chatroom.scrollHeight
+          that.$chatroom.scrollTop = that.$chatroom.scrollHeight
         }, 0)
       },
-      fetchHistoryMsg () {
-        getHistoryMsg(this.conversationType, this.targetId, 0, 20).then(([list, hasMsg]) => {
-          console.log(list, hasMsg)
-          this.historyMsg = list
-          this.hasMsg = hasMsg
+      fetchLatestMessage () {
+        this.$store.dispatch('getHistoryMsg', this.page).then((data) => {
+          this.page.first = false
           this.refreshChatroom()
         })
+      },
+      fetchHistoricalMessage (e) {
+        if (e.target.scrollTop <= 10 && !this.page.first && !this.page.loading && this.curConversation.hasMsg) {
+          console.log('---fetchHistoricalMessage---')
+          this.page.first = false
+          this.page.loading = true
+          let curHeight = this.$chatroom.scrollHeight
+          let that = this
+          this.$store.dispatch('getHistoryMsg', this.page).then(data => {
+            setTimeout(function () {
+              that.page.loading = false
+            }, 500)
+            this.$chatroom.scrollTop = this.$chatroom.scrollHeight - curHeight
+          })
+        }
       }
     },
     filters: {
@@ -174,7 +212,20 @@
     },
     watch: {
       targetId (val) {
-        this.fetchHistoryMsg()
+        this.page.first = true
+        let conversation = {
+          conversationType: this.conversationType,
+          targetId: this.targetId,
+          hasMsg: true,
+          histories: []
+        }
+        this.$store.commit('SET_CUR_CONVERSATION', conversation)
+        this.fetchChatMembers()
+        this.fetchLatestMessage()
+        this.clearUnreadCount()
+      },
+      'curConversation.newMsg': function (val, oldVal) {
+        this.refreshChatroom()
       }
     }
   }
@@ -216,37 +267,31 @@
     font-size: 14px;
   }
 
-  .msg-card {
-    display: flex;
-    align-items: flex-start;
-    justify-content: start;
-
-    .face {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 8px;
-      img {
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .info {
-      flex: 1;
-    }
-  }
-
   .el-footer {
     background-color: #fff;
     .input-box {
       height: 100%;
+      .operate-row {
+        padding: 10px 5px 0;
+        color: #c7c7c7;
+        .operate-item {
+          position: relative;
+          display: inline-block;
+          font-size: 20px;
+          cursor: pointer;
+          &+.operate-item {
+            margin-left: 10px;
+          }
+          &:hover, &:focus, &:active {
+            color: #38a0fe;
+          }
+        }
+      }
       .message-form {
         display: flex;
         align-items: center;
         justify-content: start;
-        height: 100%;
-        padding: 5px;
+        padding: 0 5px;
         .text-area {
           min-height: 70px;
           flex: 1;

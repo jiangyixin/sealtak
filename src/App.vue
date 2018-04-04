@@ -30,7 +30,7 @@
 
     },
     created () {
-      this.$store.dispatch('getUserInfo', {userId: 36100}).then(resp => {
+      this.$store.dispatch('getUserProfile').then(resp => {
 
       })
       this.$store.dispatch('getRCToken').then(resp => {

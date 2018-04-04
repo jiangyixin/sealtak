@@ -1,5 +1,5 @@
 import cache from '../../utils/sessionStorage'
-import { getUserInfo } from '../../api/friend'
+import { getUserProfile } from '../../api/user'
 
 const user = {
   state: {
@@ -25,11 +25,16 @@ const user = {
     }
   },
   actions: {
-    getUserInfo({commit}, params) {
-      getUserInfo(params).then(data => {
-        commit('SET_USER_ID', data.userId)
-        commit('SET_USER_INFO', data)
-      })
+    getUserProfile({commit, state}) {
+      if (state.userInfo && state.userInfo.userId) {
+        return Promise.resolve(state.userInfo)
+      } else {
+        return getUserProfile().then(data => {
+          commit('SET_USER_ID', data.userId)
+          commit('SET_USER_INFO', data)
+          return data
+        })
+      }
     }
   },
   getters: {

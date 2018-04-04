@@ -8,3 +8,10 @@ export function getRCToken () {
   })
 }
 
+export function getUserProfile() {
+  return axios({
+    url: `/users/36100/profile`,
+    method: 'get'
+  })
+}
+

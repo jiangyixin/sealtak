@@ -11,7 +11,7 @@ export function getMyFriends (params) {
   })
 }
 
-export function getUserInfo (params) {
+export function getFriendInfo (params) {
   return axios({
     url: `/users/${params.userId}/profile`,
     method: 'get',

@@ -41,7 +41,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import { getUserInfo } from '../../api/friend'
+  import { getFriendInfo } from '../../api/friend'
   import { getHistoryMsg, sendMsg } from '../../api/rcMsg'
   let moment = require('moment')
 
@@ -88,7 +88,7 @@
         let params = {
           groupId: this.groupId
         }
-        getUserInfo(params).then(data => {
+        getFriendInfo(params).then(data => {
           this.friendInfo = data
         })
       },

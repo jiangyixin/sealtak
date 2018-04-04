@@ -1,4 +1,5 @@
 import { getRCToken } from '../../api/user'
+import { getHistoryMsg, sendMsg, clearUnreadCount } from '../../api/rcMsg'
 import cache from '../../utils/sessionStorage'
 
 const rc = {
@@ -7,8 +8,14 @@ const rc = {
     initStatus: false,
     unreadCount: 0,
     conversations: [],
-    curTargetId: '',
-    curHistories: []
+    curConversation: {
+      conversationType: 0,
+      targetId: 0,
+      hasMsg: true,
+      histories: [],
+      newMsg: 0
+    },
+    rcHistories: {}
   },
   mutations: {
     SET_RC_TOKEN: (state, rcToken) => {
@@ -26,34 +33,67 @@ const rc = {
     SET_CONVERSATIONS: (state, conversations) => {
       state.conversations = conversations
     },
-    UPDATE_CONVERSATIONS: (state, message) => {
+    SET_CUR_CONVERSATION: (state, conversation) => {
+      Object.assign(state.curConversation, conversation)
+    },
+    ADD_OLD_HISTORY: (state, [list, hasMsg]) => {
+      state.curConversation.histories.unshift(...list)
+      state.curConversation.hasMsg = hasMsg
+    },
+    ADD_NEW_HISTORY: (state, message) => {
+      state.curConversation.histories.push(message)
+    },
+    ADD_CONVERSATIONS: (state, message) => {
       state.conversations.push(message)
     },
-    SET_CUR_TARGET_ID: (state, targetId) => {
-      state.curTargetId = targetId
-    },
-    SET_CUR_HISTORIES: (state, histories) => {
-      state.curHistories = histories
+    CLEAR_UNREAD_COUNT: (state, conversation) => {
+      for (let i in state.conversations) {
+        if (state.conversations[i].targetId == conversation.targetId) {
+          state.conversations[i].unreadCount = 0
+          break
+        }
+      }
     },
     RECEIVE_NEW_MESSAGE: (state, message) => {
+      console.log('---RECEIVE_NEW_MESSAGE---')
       for (let i in state.conversations) {
-        if (state.conversations[i].targetId == message.targetId) {
+        if (state.conversations[i].targetId == state.curConversation.targetId) {
           state.conversations[i].latestMessage = message
           state.conversations[i].sentTime = message.sentTime
           state.conversations[i].sentStatus = message.sentStatus
           state.conversations[i].objectName = message.objectName
           state.conversations[i].notificationStatus = message.sentStatus
           state.conversations[i].latestMessageId = message.messageId
-          if (state.conversations[i].targetId == state.curTargetId) {
+          if (state.conversations[i].targetId == state.curConversation.targetId) {
             state.conversations[i].unreadMessageCount = 0
           } else {
             state.conversations[i].unreadMessageCount++
           }
-          break;
+          state.curConversation.histories.push(message)
+          state.curConversation.newMsg++
+          break
         }
       }
-      if (state.curTargetId == message.targetId) {
-        state.curHistories.push(message)
+      let key = message.conversationType + '-' + message.targetId
+      if (state.rcHistories[key]) {
+        state.rcHistories[key].histories.push(message)
+      } else {
+        state.rcHistories[key] = {
+          histories: [message],
+          hasMsg: true
+        }
+      }
+    },
+    SET_HISTORIES: (state, conversation) => {
+      let key = conversation.conversationType + '-' + conversation.targetId
+      if (state.rcHistories[key]) {
+        state.rcHistories[key].histories.unshift(...conversation.histories)
+        state.rcHistories[key].hasMsg = conversation.hasMsg
+      } else {
+        state.rcHistories[key] = {
+          histories: conversation.histories,
+          hasMsg: conversation.hasMsg
+        }
       }
     }
   },
@@ -64,19 +104,47 @@ const rc = {
         commit('SET_RC_TOKEN', cache.get(key))
         return Promise.resolve(cache.get(key))
       } else {
-        getRCToken().then(data => {
+        return getRCToken().then(data => {
           commit('SET_RC_TOKEN', data.token)
           cache.set(key, data.token)
+          return data.token
         })
       }
     },
+    getHistoryMsg({commit, state}, params) {
+      let key = state.curConversation.conversationType + '-' + state.curConversation.targetId
+      if (state.rcHistories[key] && params.first) {
+        commit('SET_CUR_CONVERSATION', state.rcHistories[key])
+        return Promise.resolve(state.curConversation)
+      } else if (state.curConversation.histories && !state.curConversation.hasMsg) {
+        return Promise.resolve(state.curConversation)
+      } else {
+        return getHistoryMsg(state.curConversation.conversationType, state.curConversation.targetId, params.timestramp, params.limit).then(([list, hasMsg]) => {
+          commit('ADD_OLD_HISTORY', [list, hasMsg])
+          commit('SET_HISTORIES', {conversationType: state.curConversation.conversationType, targetId: state.curConversation.targetId, histories: list, hasMsg: hasMsg})
+          return state.curConversation
+        })
+      }
+    },
+    sendMsg({commit, state}, conversation) {
+      return sendMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at).then((message) => {
+        commit('ADD_NEW_HISTORY', message)
+        return message
+      })
+    },
+    clearUnreadCount({commit}, conversation) {
+      return clearUnreadCount(conversation.conversationType, conversation.targetId).then(() => {
+        commit('CLEAR_UNREAD_COUNT', conversation)
+      })
+    }
   },
   getters: {
     rcToken: state => state.rcToken,
     initStatus: state => state.initStatus,
     unreadCount: state => state.unreadCount,
     conversations: state => state.conversations,
-    curTargetId: state => state.curTargetId
+    curConversation: state => state.curConversation,
+    rcHistories: state => state.rcHistories
   }
 }
 

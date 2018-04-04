@@ -3,11 +3,11 @@
     <div class="face"><img :src="info.headimgurl" alt=""></div>
     <div class="info">
       <div class="name">{{ info.nickname }}</div>
-      <div class="msg">{{ info.msgContent }}</div>
+      <div class="msg" v-html="info.msgContent"></div>
     </div>
     <div class="extra">
       <div class="date">{{ info.sentTime|humanizeTime }}</div>
-      <div class="num">{{ info.unreadMessageCount }}</div>
+      <div class="num" v-if="info.unreadMessageCount">{{ info.unreadMessageCount }}</div>
     </div>
   </router-link>
 </template>
@@ -39,8 +39,8 @@
         }
         switch (conversation.conversationType) {
           case 1:
-            info.headimgurl = this.objFriends[conversation['targetId']].headimgurl
-            info.nickname = this.objFriends[conversation['targetId']].nickname
+            info.headimgurl = this.objFriends[conversation['targetId']] && this.objFriends[conversation['targetId']].headimgurl
+            info.nickname = this.objFriends[conversation['targetId']] && this.objFriends[conversation['targetId']].nickname
             break;
           case 3:
             info.headimgurl = this.objGroups[conversation['targetId']] && this.objGroups[conversation['targetId']].groupHeadimgurl
@@ -144,6 +144,7 @@
         border-radius: 50%;
         overflow: hidden;
         margin-right: 5px;
+        flex-shrink: 0;
         img {
           width: 100%;
           height: 100%;
@@ -152,16 +153,30 @@
       .info {
         flex: 1;
         font-size: 15px;
+        overflow: hidden;
+        text-overflow: ellipsis;
         .name {
           margin-bottom: 2px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
         .msg {
           font-size: 14px;
           color: #999;
+          overflow: hidden;
+          word-break: break-all;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          max-height: 3em;
         }
       }
       .extra {
         font-size: 13px;
+        flex-shrink: 0;
+        width: 30px;
+        text-align: right;
         .date {
           color: #999;
           margin-bottom: 5px;

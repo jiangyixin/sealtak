@@ -16,14 +16,13 @@
         </div>
       </div>
       <div class="operate-block">
-        <el-button type="text" @click="toUserChat(userInfo.userId)">发消息</el-button>
+        <el-button type="text" @click="toChat()">发消息</el-button>
       </div>
     </el-main>
   </el-container>
 </template>
 
 <script>
-  import { getUserInfo } from '../../api/friend'
 
   export default {
     name: 'UserInfo',
@@ -33,6 +32,7 @@
     props: ['userId'],
     data () {
       return {
+        conversationType: '1',
         userInfo: {}
       }
     },
@@ -44,12 +44,12 @@
         let params = {
           userId: this.userId
         }
-        getUserInfo(params).then(data => {
+        this.$store.dispatch('getFriendInfo', params).then(data => {
           this.userInfo = data
         })
       },
-      toUserChat (userId) {
-        this.$router.push({name: 'UserChat', params: {userId: userId + ''}})
+      toChat () {
+        this.$router.push({name: 'Chat', params: {conversationType: this.conversationType, targetId: this.userId}})
       }
     },
     watch: {

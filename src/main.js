@@ -14,6 +14,9 @@ Vue.component('icon', Icon)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 
+RongIMLib.RongIMEmoji.init()
+RongIMLib.RongIMVoice.init()
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

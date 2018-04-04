@@ -1,5 +1,5 @@
 <template>
-  <el-aside width="315px" class="contacts-bar" style="height: 100%;">
+  <el-aside width="330px" class="contacts-bar" style="height: 100%;">
     <div>
       <el-row class="tac">
         <el-col :span="24">
@@ -20,7 +20,7 @@
               </template>
               <el-menu-item-group key="group">
                 <template v-for="(group, index) in myGroups">
-                  <el-menu-item :key="group.groupId" :index="group.groupId|toString">{{ group.groupName }}</el-menu-item>
+                  <el-menu-item :route="{ name: 'GroupInfo', params: { groupId: group.groupId } }" :key="group.groupId" :index="group.groupId|toString">{{ group.groupName }}</el-menu-item>
                 </template>
               </el-menu-item-group>
             </el-submenu>
