@@ -42,7 +42,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getFriendInfo } from '../../api/friend'
-  import { getHistoryMsg, sendMsg } from '../../api/rcMsg'
+  import { getHistoryMsg, sendTextMsg } from '../../api/rcMsg'
   let moment = require('moment')
 
   export default {
@@ -98,7 +98,7 @@
           extra: ''
         }
         if (msg.content) {
-          sendMsg(1, this.userId, msg).then((message) => {
+          sendTextMsg(1, this.userId, msg).then((message) => {
             this.historyMsg.push(message)
             this.replyText = ''
             this.refreshChatroom()

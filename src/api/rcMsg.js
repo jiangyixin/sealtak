@@ -71,7 +71,10 @@ export function getHistoryMsg(msgType, targetId, timestrap = null, count = 20) {
   })
 }
 
-export function sendMsg(msgType, targetId, message, at) {
+
+
+export function sendTextMsg(msgType, targetId, message, at) {
+
   let rcMsg = new RongIMLib.TextMessage(message)
   let conversationtype = msgTypes[msgType]
   return new Promise((resolve, reject) => {

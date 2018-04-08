@@ -16,8 +16,8 @@ service.interceptors.request.use(
     // if(config.method  === 'post'){
     //   config.data = qs.stringify(config.data);
     // }
-    config.headers['token'] = store.getters.token || 'abc'
-    config.headers['userId'] = store.getters.userId || 36100
+    config.headers['token'] = store.getters.token
+    config.headers['userid'] = store.getters.userId
     return config
   },
   error => {

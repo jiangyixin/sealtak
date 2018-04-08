@@ -1,5 +1,5 @@
 import { getRCToken } from '../../api/user'
-import { getHistoryMsg, sendMsg, clearUnreadCount } from '../../api/rcMsg'
+import { getHistoryMsg, sendTextMsg, clearUnreadCount } from '../../api/rcMsg'
 import cache from '../../utils/sessionStorage'
 
 const rc = {
@@ -126,8 +126,8 @@ const rc = {
         })
       }
     },
-    sendMsg({commit, state}, conversation) {
-      return sendMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at).then((message) => {
+    sendTextMsg({commit, state}, conversation) {
+      return sendTextMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at).then((message) => {
         commit('ADD_NEW_HISTORY', message)
         return message
       })

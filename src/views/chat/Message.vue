@@ -4,7 +4,7 @@
       <div class="info-ntf">{{ rcMessage.content.message }}</div>
     </template>
     <template v-else-if="['RC:TxtMsg', 'RC:ImgMsg', 'RC:VcMsg'].indexOf(rcMessage.objectName) > -1">
-      <div class="normal-ntf">
+      <div class="normal-ntf" :class="{ me: isMe }">
         <div class="face"><img :src="owner.headimgurl" alt=""></div>
         <div class="info">
           <div class="name">{{ owner.nickname }}</div>
@@ -17,6 +17,7 @@
         </div>
       </div>
     </template>
+    <template v-else-if="rcMessage.objectName == 'RC:TypSts'"></template>
     <template v-else="">
       <div>
         {{ rcMessage.objectName }}
@@ -38,6 +39,9 @@
       owner: {
         type: Object,
         default: {}
+      },
+      isMe: {
+        type: Boolean
       }
     },
     data () {
@@ -155,12 +159,18 @@
       display: flex;
       align-items: flex-start;
       justify-content: start;
+      &.me {
+        flex-direction: row-reverse;
+        .info {
+          text-align: right;
+        }
+      }
       .face {
         width: 40px;
         height: 40px;
         border-radius: 50%;
         overflow: hidden;
-        margin-right: 8px;
+        margin: 0 8px;
         img {
           width: 100%;
           height: 100%;

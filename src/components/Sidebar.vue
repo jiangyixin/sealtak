@@ -40,6 +40,7 @@
       text-align: center;
       height: 70px;
       line-height: 75px;
+      cursor: pointer;
       &.active {
         background-color: #2884ca;
       }

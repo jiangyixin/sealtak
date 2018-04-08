@@ -1,6 +1,7 @@
 <template>
   <el-container>
     <el-header>
+      <el-button class="btn-left" icon="el-icon-arrow-left" @click="back()"></el-button>
       <h3 class="title">好友信息</h3>
     </el-header>
     <el-main>
@@ -50,6 +51,9 @@
       },
       toChat () {
         this.$router.push({name: 'Chat', params: {conversationType: this.conversationType, targetId: this.userId}})
+      },
+      back () {
+        history.back()
       }
     },
     watch: {
@@ -65,6 +69,7 @@
     background-color: #f9fbfd;
   }
   .el-header {
+    position: relative;
     text-align: center;
     background-color: #fff;
     box-shadow: 2px 2px 2px #f5f7fa;
@@ -73,6 +78,14 @@
       font-weight: 400;
       line-height: 60px;
       margin: 0;
+    }
+    .btn-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 60px;
+      font-size: 25px;
+      border: none;
     }
   }
   .el-main {

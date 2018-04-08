@@ -1,4 +1,5 @@
 import cache from '../../utils/sessionStorage'
+import localCache from '../../utils/localStorage'
 import { getUserProfile } from '../../api/user'
 
 const user = {
@@ -11,9 +12,11 @@ const user = {
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+      localCache.set('token', token)
     },
     SET_USER_ID: (state, userId) => {
       state.userId = userId
+      localCache.set('userId', userId)
     },
     SET_USER_INFO: (state, userInfo) => {
       state.userInfo = userInfo
@@ -30,7 +33,6 @@ const user = {
         return Promise.resolve(state.userInfo)
       } else {
         return getUserProfile().then(data => {
-          commit('SET_USER_ID', data.userId)
           commit('SET_USER_INFO', data)
           return data
         })
@@ -38,8 +40,12 @@ const user = {
     }
   },
   getters: {
-    token: state => state.token,
-    userId: state => state.userId,
+    token: state => {
+      return state.token || localCache.get('token') || ''
+    },
+    userId: state => {
+      return state.userId || localCache.get('userId') || 0
+    },
     userInfo: state => state.userInfo,
     curSidebar: state => {
       let key = 'curSidebar'

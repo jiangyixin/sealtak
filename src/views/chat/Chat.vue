@@ -1,14 +1,16 @@
 <template>
   <el-container>
     <el-header>
+      <el-button class="btn-left" icon="el-icon-arrow-left" @click="back()"></el-button>
       <h3 class="title">{{ chatInfo.title }}</h3>
+      <el-button class="btn-right" icon="el-icon-info" @click="toInfo()"></el-button>
     </el-header>
     <el-main id="chatroom">
       <div class="message-block">
         <ul class="message-list">
           <li v-for="(msg, index) in curConversation.histories" :key="index" class="message-item">
             <div class="msg-date">{{ msg.sentTime|humanizeTime(curConversation.histories[index-1] && curConversation.histories[index-1].sentTime) }}</div>
-            <Message v-if="chatMembers[msg.senderUserId]" :rcMessage="msg" :owner="chatMembers[msg.senderUserId]"></Message>
+            <Message :rcMessage="msg" :owner="chatMembers[msg.senderUserId] || {}" :isMe="msg.senderUserId == userId ? true : false"></Message>
           </li>
         </ul>
       </div>
@@ -16,25 +18,15 @@
     <el-footer height="130px">
       <div class="input-box">
         <div class="operate-row">
-          <div class="operate-item">
-            <icon name="meh-o" v-popover:popover4></icon>
-            <emojo v-model="showEmojo"></emojo>
-            <el-popover
-              ref="popover4"
-              placement="right"
-              width="400"
-              trigger="click">
-              <el-table>
-                <el-table-column width="150" property="date" label="日期"></el-table-column>
-                <el-table-column width="100" property="name" label="姓名"></el-table-column>
-                <el-table-column width="300" property="address" label="地址"></el-table-column>
-              </el-table>
-            </el-popover>
-          </div>
+          <a @click="toggleShowEmojo" class="operate-item">
+            <icon name="meh-o"></icon>
+            <emojo v-model="showEmojo" v-on:execCommandEmojo="execCommandEmojo" @update:value="val => showEmojo = val"></emojo>
+          </a>
           <div class="operate-item"><icon name="image"></icon></div>
         </div>
         <div class="message-form">
           <el-input
+            id="replyText"
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }"
             placeholder="请输入内容"
@@ -70,6 +62,7 @@
     },
     data () {
       return {
+        $replyText: null,
         $chatroom: null,
         chatInfo: {
           title: ''
@@ -82,11 +75,11 @@
           loading: false
         },
         chatMembers: {},
-        showEmojo: true
+        showEmojo: false
       }
     },
     computed: {
-      ...mapGetters(['initStatus', 'userInfo', 'curConversation'])
+      ...mapGetters(['initStatus', 'userInfo', 'curConversation', 'userId'])
     },
     created () {
       this.page.first = true
@@ -110,8 +103,19 @@
     mounted () {
       this.$chatroom = document.getElementById('chatroom')
       this.$chatroom.addEventListener('scroll', this.fetchHistoricalMessage)
+      this.$replyText = document.getElementById('replyText')
     },
     methods: {
+      back () {
+        history.back()
+      },
+      toInfo () {
+        if (this.conversationType == 1) {
+          this.$router.push({name: 'UserInfo', params: {userId: this.targetId}})
+        } else if (this.conversationType == 3) {
+          this.$router.push({name: 'GroupInfo', params: { groupId: this.targetId } })
+        }
+      },
       clearUnreadCount () {
         this.$store.dispatch('clearUnreadCount', this.curConversation).then()
       },
@@ -150,19 +154,26 @@
           })
         })
       },
+      symbolToEmoji (symbol) {
+        if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.symbolToEmoji) {
+          return RongIMLib.RongIMEmoji.symbolToEmoji(symbol)
+        } else {
+          return symbol
+        }
+      },
       sendMessage () {
         let conversation = {
           conversationType: this.curConversation.conversationType,
           targetId: this.curConversation.targetId,
           message: {
-            content: this.replyText.trim(),
+            content: this.symbolToEmoji(this.replyText.trim()),
             extra: ''
           },
           at: false
         }
 
         if (conversation.message.content) {
-          this.$store.dispatch('sendMsg', conversation).then(data => {
+          this.$store.dispatch('sendTextMsg', conversation).then(data => {
             this.replyText = ''
             this.refreshChatroom()
           })
@@ -194,6 +205,13 @@
             this.$chatroom.scrollTop = this.$chatroom.scrollHeight - curHeight
           })
         }
+      },
+      toggleShowEmojo () {
+        this.showEmojo = !this.showEmojo
+      },
+      execCommandEmojo (symbol) {
+        this.$replyText.focus()
+        document.execCommand('insertText', 'false', symbol)
       }
     },
     filters: {
@@ -237,6 +255,7 @@
     overflow: hidden;
   }
   .el-header {
+    position: relative;
     text-align: center;
     background-color: #fff;
     box-shadow: 2px 2px 2px #f5f7fa;
@@ -245,6 +264,22 @@
       font-weight: 400;
       line-height: 60px;
       margin: 0;
+    }
+    .btn-left {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 60px;
+      font-size: 25px;
+      border: none;
+    }
+    .btn-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 60px;
+      font-size: 25px;
+      border: none;
     }
   }
   .el-main {
@@ -277,8 +312,11 @@
         .operate-item {
           position: relative;
           display: inline-block;
-          font-size: 20px;
           cursor: pointer;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+          text-align: center;
           &+.operate-item {
             margin-left: 10px;
           }

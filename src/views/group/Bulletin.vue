@@ -52,7 +52,7 @@
             },
             at: true
           }
-          this.$store.dispatch('sendMsg', conversation).then(data => {
+          this.$store.dispatch('sendTextMsg', conversation).then(data => {
             console.log(data)
             this.$message({
               type: 'success',
