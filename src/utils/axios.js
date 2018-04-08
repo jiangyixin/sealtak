@@ -17,7 +17,7 @@ service.interceptors.request.use(
     //   config.data = qs.stringify(config.data);
     // }
     config.headers['token'] = store.getters.token
-    config.headers['userid'] = store.getters.userId
+    config.headers['userId'] = store.getters.userId
     return config
   },
   error => {
@@ -33,9 +33,9 @@ service.interceptors.response.use(
       console.log(res)
       return res.data
     }
-    // if ([401, 402].indexOf(res.data.code) !== -1) {
-    //
-    // } else
+    if ([410].indexOf(res.data.code) !== -1) {
+        location.href = process.env.LOGIN_URL
+    } else
     if (res.data.code !== 200) {
       // 错误提示
       Message({

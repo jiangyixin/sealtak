@@ -11,11 +11,6 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Index',
-      component: Index
-    },
-    {
       path: '/chat/:conversationType/:targetId',
       name: 'Chat',
       component: Chat,
@@ -41,6 +36,11 @@ export default new Router({
       name: 'Bulletin',
       component: Bulletin,
       props: true
+    },
+    {
+      path: '/',
+      name: 'Index',
+      component: Index
     }
   ]
 })
