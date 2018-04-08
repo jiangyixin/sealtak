@@ -1,4 +1,5 @@
 import axios from '../utils/axios'
+import store from '../store'
 
 
 export function getRCToken () {
@@ -10,7 +11,7 @@ export function getRCToken () {
 
 export function getUserProfile() {
   return axios({
-    url: `/users/36100/profile`,
+    url: `/users/${store.getters.userId}/profile`,
     method: 'get'
   })
 }
