@@ -43,8 +43,6 @@
   import Emojo from './Emoji.vue'
   import Message from './Message.vue'
   import { mapGetters } from 'vuex'
-  import { getFriendInfo } from '../../api/friend'
-  import { getGroupMembers } from '../../api/group'
   let moment = require('moment')
 
   export default {

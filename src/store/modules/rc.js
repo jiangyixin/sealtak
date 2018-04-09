@@ -34,7 +34,9 @@ const rc = {
       state.conversations = conversations
     },
     SET_CUR_CONVERSATION: (state, conversation) => {
-      Object.assign(state.curConversation, conversation)
+      // state.curConversation = conversation
+      // Object.assign(state.curConversation, conversation)
+      state.curConversation = Object.assign({}, state.curConversation, conversation)
     },
     ADD_OLD_HISTORY: (state, [list, hasMsg]) => {
       state.curConversation.histories.unshift(...list)
@@ -55,25 +57,32 @@ const rc = {
       }
     },
     RECEIVE_NEW_MESSAGE: (state, message) => {
+      if (message.objectName == 'RC:TypSts') {
+        return
+      }
       console.log('---RECEIVE_NEW_MESSAGE---')
+      let index = 0
       for (let i in state.conversations) {
-        if (state.conversations[i].targetId == state.curConversation.targetId) {
+        if (state.conversations[i].targetId == message.targetId) {
+          console.log('state.conversations[i].unreadMessageCount', state.conversations[i].unreadMessageCount)
+          index = i
           state.conversations[i].latestMessage = message
           state.conversations[i].sentTime = message.sentTime
           state.conversations[i].sentStatus = message.sentStatus
           state.conversations[i].objectName = message.objectName
           state.conversations[i].notificationStatus = message.sentStatus
           state.conversations[i].latestMessageId = message.messageId
-          if (state.conversations[i].targetId == state.curConversation.targetId) {
-            state.conversations[i].unreadMessageCount = 0
-          } else {
-            state.conversations[i].unreadMessageCount++
-          }
-          state.curConversation.histories.push(message)
-          state.curConversation.newMsg++
+          state.conversations[i].unreadMessageCount++
           break
         }
       }
+      console.log(index, state.conversations[index].unreadMessageCount)
+      console.log('histories.length', state.curConversation.histories.length)
+      if (state.curConversation.targetId == message.targetId) {
+        state.curConversation.histories.push(message)
+        state.curConversation.newMsg++
+      }
+      console.log('histories.length', state.curConversation.histories.length)
       let key = message.conversationType + '-' + message.targetId
       if (state.rcHistories[key]) {
         state.rcHistories[key].histories.push(message)
@@ -83,6 +92,7 @@ const rc = {
           hasMsg: true
         }
       }
+      console.log('histories.length', state.curConversation.histories.length)
     },
     SET_HISTORIES: (state, conversation) => {
       let key = conversation.conversationType + '-' + conversation.targetId
@@ -114,7 +124,7 @@ const rc = {
     getHistoryMsg({commit, state}, params) {
       let key = state.curConversation.conversationType + '-' + state.curConversation.targetId
       if (state.rcHistories[key] && params.first) {
-        commit('SET_CUR_CONVERSATION', state.rcHistories[key])
+        commit('SET_CUR_CONVERSATION', Object.assign({}, state.rcHistories[key]))
         return Promise.resolve(state.curConversation)
       } else if (state.curConversation.histories && !state.curConversation.hasMsg) {
         return Promise.resolve(state.curConversation)
