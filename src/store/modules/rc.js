@@ -61,20 +61,20 @@ const rc = {
         return
       }
       console.log('---RECEIVE_NEW_MESSAGE---')
-      let index = 0
-      for (let i in state.conversations) {
-        if (state.conversations[i].targetId == message.targetId) {
-          index = i
-          state.conversations[i].latestMessage = message
-          state.conversations[i].sentTime = message.sentTime
-          state.conversations[i].sentStatus = message.sentStatus
-          state.conversations[i].objectName = message.objectName
-          state.conversations[i].notificationStatus = message.sentStatus
-          state.conversations[i].latestMessageId = message.messageId
-          // state.conversations[i].unreadMessageCount = state.conversations[i].unreadMessageCount+1
-          break
-        }
-      }
+      // let index = 0
+      // for (let i in state.conversations) {
+      //   if (state.conversations[i].targetId == message.targetId) {
+      //     index = i
+      //     state.conversations[i].latestMessage = message
+      //     state.conversations[i].sentTime = message.sentTime
+      //     state.conversations[i].sentStatus = message.sentStatus
+      //     state.conversations[i].objectName = message.objectName
+      //     state.conversations[i].notificationStatus = message.sentStatus
+      //     state.conversations[i].latestMessageId = message.messageId
+      //     // state.conversations[i].unreadMessageCount = state.conversations[i].unreadMessageCount+1
+      //     break
+      //   }
+      // }
       if (state.curConversation.targetId == message.targetId) {
         state.curConversation.histories.push(message)
         state.curConversation.newMsg++
