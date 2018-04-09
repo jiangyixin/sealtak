@@ -28,7 +28,6 @@ RongIMLib.RongIMVoice.init()
 router.beforeEach((to, from, next) => {
   let token = getQueryString('token')
   let userId = getQueryString('userId')
-  console.log(token, userId)
   if (token && userId) {
     store.commit('SET_TOKEN', token)
     store.commit('SET_USER_ID', userId)

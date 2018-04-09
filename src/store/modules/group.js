@@ -1,4 +1,5 @@
 import { getMyGroups, getGroupInfo, getGroupMembers } from '../../api/group'
+import Vue from 'vue'
 
 const group = {
   state: {
@@ -12,23 +13,24 @@ const group = {
     SET_OBJ_GROUPS: (state, groups) => {
       for (let group of groups) {
         if (state.objGroups[group['groupId']]) {
-          Object.assign(state.objGroups[group['groupId']], group)
+          state.objGroups[group['groupId']] = Object.assign({}, state.objGroups[group['groupId']], group)
         } else {
-          state.objGroups[group['groupId']] = group
+          Vue.set(state.objGroups, group['groupId'], group)
         }
       }
     },
     SET_GROUP_MEMBERS: (state, [groupId, members]) => {
       if (!state.objGroups[groupId]) {
-        state.objGroups[groupId] = {}
+        Vue.set(state.objGroups, groupId, {})
       }
-      state.objGroups[groupId].members = members
+      Vue.set(state.objGroups[groupId], 'members', members)
     },
     SET_GROUP_INFO: (state, [groupId, info]) => {
       if (!state.objGroups[groupId]) {
-        state.objGroups[groupId] = {}
+        Vue.set(state.objGroups, groupId, {})
       }
-      state.objGroups[groupId].info = info
+      state.objGroups[groupId] = Object.assign({}, state.objGroups[groupId], info)
+      Vue.set(state.objGroups[groupId], 'info', info)
     }
   },
   actions: {

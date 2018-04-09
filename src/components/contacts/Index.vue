@@ -55,7 +55,7 @@
       }
     },
     computed: {
-      ...mapGetters(['myFriends', 'groupFriends', 'myGroups'])
+      ...mapGetters(['groupFriends', 'myGroups'])
     },
     filters: {
       toString (val = '') {

@@ -1,5 +1,6 @@
 import { getMyFriends, getFriendInfo } from '../../api/friend'
 import { groupByZh } from '../../utils/filter'
+import Vue from 'vue'
 
 const friend = {
   state: {
@@ -17,11 +18,11 @@ const friend = {
     },
     SET_OBJ_FRIENDS: (state, friends) => {
       for (let friend of friends) {
-        state.objFriends[friend.friendUserId] = friend
+        Vue.set(state.objFriends, friend.friendUserId, friend)
       }
     },
     UPDATE_OBJ_FRIENDS: (state, friend) => {
-      state.objFriends[friend.userId] = friend
+      Vue.set(state.objFriends, friend.userId, friend)
     },
     SET_FRIEND_INFO: (state, friend) => {
       state.friendInfo = friend

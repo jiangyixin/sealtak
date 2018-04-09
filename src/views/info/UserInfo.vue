@@ -8,15 +8,15 @@
       <div class="user-info">
         <div class="user-data">
           <div class="photo">
-            <img :src="userInfo.headimgurl" alt="">
+            <img :src="friendInfo.headimgurl" alt="">
           </div>
           <div class="info">
-            <h3 class="username">{{ userInfo.nickname }}</h3>
-            <p class="studentid">{{ userInfo.studentid }}</p>
+            <h3 class="username">{{ friendInfo.nickname }}</h3>
+            <p class="studentid">{{ friendInfo.studentid }}</p>
           </div>
         </div>
       </div>
-      <div class="operate-block">
+      <div v-if="friendInfo.isFriend" class="operate-block">
         <el-button type="text" @click="toChat()">发消息</el-button>
       </div>
     </el-main>
@@ -34,7 +34,7 @@
     data () {
       return {
         conversationType: '1',
-        userInfo: {}
+        friendInfo: {}
       }
     },
     created () {
@@ -46,7 +46,7 @@
           userId: this.userId
         }
         this.$store.dispatch('getFriendInfo', params).then(data => {
-          this.userInfo = data
+          this.friendInfo = data
         })
       },
       toChat () {
