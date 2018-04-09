@@ -64,7 +64,6 @@ const rc = {
       let index = 0
       for (let i in state.conversations) {
         if (state.conversations[i].targetId == message.targetId) {
-          console.log('state.conversations[i].unreadMessageCount', state.conversations[i].unreadMessageCount)
           index = i
           state.conversations[i].latestMessage = message
           state.conversations[i].sentTime = message.sentTime
@@ -76,13 +75,10 @@ const rc = {
           break
         }
       }
-      console.log(index, state.conversations[index].unreadMessageCount)
-      console.log('histories.length', state.curConversation.histories.length)
       if (state.curConversation.targetId == message.targetId) {
         state.curConversation.histories.push(message)
         state.curConversation.newMsg++
       }
-      console.log('histories.length', state.curConversation.histories.length)
       let key = message.conversationType + '-' + message.targetId
       if (state.rcHistories[key]) {
         state.rcHistories[key].histories.push(message)

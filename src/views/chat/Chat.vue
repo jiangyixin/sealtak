@@ -30,6 +30,7 @@
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }"
             placeholder="请输入内容"
+            @keyup.ctrl.enter.native="sendMessage"
             v-model="replyText">
           </el-input>
           <el-button class="btn-send" type="text" @click="sendMessage">发送</el-button>
