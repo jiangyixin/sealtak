@@ -72,7 +72,7 @@ const rc = {
           state.conversations[i].objectName = message.objectName
           state.conversations[i].notificationStatus = message.sentStatus
           state.conversations[i].latestMessageId = message.messageId
-          state.conversations[i].unreadMessageCount++
+          // state.conversations[i].unreadMessageCount = state.conversations[i].unreadMessageCount+1
           break
         }
       }
@@ -124,7 +124,7 @@ const rc = {
     getHistoryMsg({commit, state}, params) {
       let key = state.curConversation.conversationType + '-' + state.curConversation.targetId
       if (state.rcHistories[key] && params.first) {
-        commit('SET_CUR_CONVERSATION', Object.assign({}, state.rcHistories[key]))
+        commit('SET_CUR_CONVERSATION', JSON.parse(JSON.stringify(state.rcHistories[key])))
         return Promise.resolve(state.curConversation)
       } else if (state.curConversation.histories && !state.curConversation.hasMsg) {
         return Promise.resolve(state.curConversation)
