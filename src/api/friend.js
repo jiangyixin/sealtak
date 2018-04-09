@@ -21,3 +21,17 @@ export function getFriendInfo (params) {
   })
 }
 
+export function applyFriend(form) {
+  return axios({
+    url: `/friends/apply`,
+    method: 'post',
+    data: {
+      friendUserId: form.friendUserId,
+      applyReason: form.applyReason,
+      remark: form.remark,
+      applyFrom: form.applyFrom,
+      fromRemark: form.fromRemark
+    }
+  })
+}
+

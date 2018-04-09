@@ -19,6 +19,9 @@
       <div v-if="friendInfo.isFriend || friendInfo.applyStatus == 'passed'" class="operate-block">
         <el-button type="text" @click="toChat()">发消息</el-button>
       </div>
+      <div v-else="" class="operate-block">
+        <el-button type="text" @click="toApplyFriend()">申请好友</el-button>
+      </div>
     </el-main>
   </el-container>
 </template>
@@ -30,7 +33,7 @@
     components: {
 
     },
-    props: ['userId'],
+    props: ['userId', 'applyFrom', 'fromRemark'],
     data () {
       return {
         conversationType: '1',
@@ -54,6 +57,13 @@
       },
       back () {
         history.back()
+      },
+      toApplyFriend () {
+        this.$router.push({name: 'ApplyFriend', params: {
+          friendUserId: this.userId,
+          applyFrom: this.applyFrom,
+          fromRemark: this.fromRemark
+        }})
       }
     },
     watch: {

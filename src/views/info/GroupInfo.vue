@@ -24,7 +24,7 @@
       </div>
       <ul class="group-member-list">
         <li v-for="(member, index) in groupMembers" :key="member.userId" class="group-member-item">
-          <router-link :to="{name: 'UserInfo', params: {userId: member.userId}}" class="member-card">
+          <router-link :to="{name: 'UserInfo', params: {userId: member.userId, applyFrom: 'group', fromRemark: groupId}}" class="member-card">
             <div class="face"><img :src="member.headimgurl" alt=""></div>
             <div class="info">
               <div class="name">{{ member.nickname }}</div>

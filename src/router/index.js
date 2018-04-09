@@ -5,6 +5,7 @@ import UserInfo from '../views/info/UserInfo.vue'
 import GroupInfo from '../views/info/GroupInfo.vue'
 import Chat from '../views/chat/Chat.vue'
 import Bulletin from '../views/group/Bulletin.vue'
+import ApplyFriend from '../views/friend/ApplyFriend.vue'
 
 Vue.use(Router)
 
@@ -20,10 +21,24 @@ export default new Router({
       })
     },
     {
-      path: '/user-info/:userId',
+      path: '/user-info/:userId/:applyFrom/:fromRemark',
       name: 'UserInfo',
       component: UserInfo,
-      props: true
+      props: (router) => ({
+        userId: router.params.userId,
+        applyFrom: router.params.applyFrom,
+        fromRemark: router.params.fromRemark
+      })
+    },
+    {
+      path: '/apply-friend/:friendUserId/:applyFrom/:fromRemark',
+      name: 'ApplyFriend',
+      component: ApplyFriend,
+      props: (router) => ({
+        friendUserId: router.params.friendUserId,
+        applyFrom: router.params.applyFrom,
+        fromRemark: router.params.fromRemark
+      })
     },
     {
       path: '/group-info/:groupId',

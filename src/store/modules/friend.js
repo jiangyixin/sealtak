@@ -1,4 +1,4 @@
-import { getMyFriends, getFriendInfo } from '../../api/friend'
+import { getMyFriends, getFriendInfo, applyFriend } from '../../api/friend'
 import { groupByZh } from '../../utils/filter'
 import Vue from 'vue'
 
@@ -51,6 +51,11 @@ const friend = {
           return data
         })
       }
+    },
+    applyFriend({commit, state}, form) {
+      return applyFriend(form).then(data => {
+        return data
+      })
     }
   },
   getters: {
