@@ -16,7 +16,7 @@
           </div>
         </div>
       </div>
-      <div v-if="friendInfo.isFriend" class="operate-block">
+      <div v-if="friendInfo.isFriend || friendInfo.applyStatus == 'passed'" class="operate-block">
         <el-button type="text" @click="toChat()">发消息</el-button>
       </div>
     </el-main>
