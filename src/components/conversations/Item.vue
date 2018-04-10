@@ -53,7 +53,7 @@
             break;
         }
         let message = conversation.latestMessage.content
-        switch (conversation.objectName) {
+        switch (conversation.latestMessage.objectName) {
           case 'RC:TxtMsg':
             var content = message.content.replace(/</gi, '&lt;').replace(/>/gi, '&gt;');
             if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.emojiToHTML) {

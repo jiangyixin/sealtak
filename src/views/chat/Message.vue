@@ -10,7 +10,7 @@
           <div class="name">{{ owner.nickname }}</div>
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
-            <img class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
+            <img @click="previewImage(handledMessage.html)" class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
             <div v-else-if="rcMessage.objectName == 'RC:VcMsg'">[语音消息]</div>
             <div v-else="">[其他消息]</div>
           </div>
@@ -100,7 +100,9 @@
 
     },
     methods: {
-
+      previewImage (imgUrl) {
+        this.$emit('showDialogImage', imgUrl)
+      },
     }
   }
 </script>
@@ -120,6 +122,8 @@
         flex-direction: row-reverse;
         .info {
           text-align: right;
+          margin-left: 5px;
+          margin-right: 0;
         }
       }
       .face {
@@ -136,16 +140,18 @@
       }
       .info {
         flex: 1;
+        margin-right: 5px;
         .text-msg {
           font-family: inherit;
           margin: 0;
-          white-space: pre-line;
+          white-space: pre-wrap;
           word-wrap:break-word;
           word-break:break-all;
         }
         .img-msg {
-          max-width: 100%;
-          max-height: 500px;
+          max-width: 60%;
+          max-height: 300px;
+          cursor: pointer;
         }
       }
     }

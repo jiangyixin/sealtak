@@ -10,7 +10,7 @@
         <ul class="message-list">
           <li v-for="(msg, index) in curConversation.histories" :key="index" class="message-item">
             <div class="msg-date">{{ msg.sentTime|humanizeTime(curConversation.histories[index-1] && curConversation.histories[index-1].sentTime) }}</div>
-            <Message :rcMessage="msg" :owner="chatMembers[msg.senderUserId] || {}" :isMe="msg.senderUserId == userId ? true : false"></Message>
+            <Message :rcMessage="msg" :owner="chatMembers[msg.senderUserId] || {}" :isMe="msg.senderUserId == userId ? true : false" v-on:showDialogImage="showDialogImage"></Message>
           </li>
         </ul>
       </div>
@@ -39,6 +39,9 @@
         </div>
       </div>
     </el-footer>
+    <el-dialog :visible.sync="previewDialogVisible">
+      <img width="100%" :src="dialogImageUrl" alt="">
+    </el-dialog>
   </el-container>
 </template>
 
@@ -77,13 +80,16 @@
           loading: false
         },
         chatMembers: {},
-        showEmojo: false
+        showEmojo: false,
+        previewDialogVisible: false,
+        dialogImageUrl: ''
       }
     },
     computed: {
       ...mapGetters(['initStatus', 'userInfo', 'curConversation', 'userId'])
     },
     created () {
+      console.log('-----created-----')
       this.page.first = true
       let conversation = {
         conversationType: this.conversationType,
@@ -110,6 +116,10 @@
     methods: {
       back () {
         history.back()
+      },
+      showDialogImage (imgUrl) {
+        this.dialogImageUrl = imgUrl
+        this.previewDialogVisible = true
       },
       toInfo () {
         if (this.conversationType == 1) {
@@ -230,9 +240,6 @@
           console.log(data)
           this.refreshChatroom()
         })
-//          .catch((info) => {
-//          console.log('sendImageMessage', info)
-//        })
       }
     },
     filters: {
