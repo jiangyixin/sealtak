@@ -309,9 +309,9 @@
   .message-block {
     .message-list {
       list-style: none;
-      padding-left: 5px;
+      padding-left: 0;
       .message-item {
-        margin-bottom: 20px;
+        margin: 0 5px 20px 5px;
       }
     }
   }

@@ -44,6 +44,15 @@ const rc = {
     },
     ADD_NEW_HISTORY: (state, message) => {
       state.curConversation.histories.push(message)
+      let key = message.conversationType + '-' + message.targetId
+      if (state.rcHistories[key]) {
+        state.rcHistories[key].histories.push(message)
+      } else {
+        state.rcHistories[key] = {
+          histories: [message],
+          hasMsg: true
+        }
+      }
     },
     ADD_CONVERSATIONS: (state, message) => {
       state.conversations.push(message)
@@ -137,8 +146,6 @@ const rc = {
         .then((message) => {
         commit('ADD_NEW_HISTORY', message)
         return message
-      }).catch((info) => {
-        return Promise.resolve(info)
       })
     },
     sendImageMsg({commit, state}, conversation) {
@@ -147,9 +154,6 @@ const rc = {
         commit('ADD_NEW_HISTORY', message)
         return message
       })
-      //   .catch((info) => {
-      //     throw info
-      // })
     },
     clearUnreadCount({commit}, conversation) {
       return clearUnreadCount(conversation.conversationType, conversation.targetId).then(() => {

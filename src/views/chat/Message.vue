@@ -7,7 +7,7 @@
       <div class="normal-ntf" :class="{ me: isMe }">
         <div class="face"><img :src="owner.headimgurl" alt=""></div>
         <div class="info">
-          <div class="name">{{ owner.nickname }}</div>
+          <div class="name" v-if="!isMe">{{ owner.nickname }}</div>
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
             <img class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
@@ -128,6 +128,7 @@
         border-radius: 50%;
         overflow: hidden;
         margin: 0 8px;
+        flex-shrink: 0;
         img {
           width: 100%;
           height: 100%;
@@ -138,7 +139,9 @@
         .text-msg {
           font-family: inherit;
           margin: 0;
-          white-space: pre;
+          white-space: pre-line;
+          word-wrap:break-word;
+          word-break:break-all;
         }
         .img-msg {
           max-width: 100%;
