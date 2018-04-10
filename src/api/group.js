@@ -22,3 +22,18 @@ export function getGroupMembers(groupId) {
   })
 }
 
+export function updateGroupSetting(groupId, data) {
+  return axios({
+    url: `/groups/${groupId}/mysetting`,
+    method: 'post',
+    data: data
+  })
+}
+
+export function getMyGroupSetting(groupId) {
+  return axios({
+    url: `/groups/${groupId}/mysetting`,
+    method: 'get'
+  })
+}
+

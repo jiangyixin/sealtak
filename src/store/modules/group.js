@@ -1,4 +1,4 @@
-import { getMyGroups, getGroupInfo, getGroupMembers } from '../../api/group'
+import { getMyGroups, getGroupInfo, getGroupMembers, updateGroupSetting, getMyGroupSetting } from '../../api/group'
 import Vue from 'vue'
 
 const group = {
@@ -31,6 +31,12 @@ const group = {
       }
       state.objGroups[groupId] = Object.assign({}, state.objGroups[groupId], info)
       Vue.set(state.objGroups[groupId], 'info', info)
+    },
+    SET_MY_GROUP_SETTING: (state, [groupId, mySetting]) => {
+      if (!state.objGroups[groupId]) {
+        Vue.set(state.objGroups, groupId, {})
+      }
+      Vue.set(state.objGroups[groupId], 'mySetting', mySetting)
     }
   },
   actions: {
@@ -64,6 +70,22 @@ const group = {
           return data
         })
       }
+    },
+    getMyGroupSetting({commit, state}, groupId) {
+      if (state.objGroups[groupId] && state.objGroups[groupId].mySetting) {
+        return state.objGroups[groupId].mySetting
+      } else {
+        return getMyGroupSetting(groupId).then(data => {
+          commit('SET_MY_GROUP_SETTING', [groupId, data])
+          return data
+        })
+      }
+    },
+    updateGroupSetting({dispatch}, form) {
+      return updateGroupSetting(form.groupId, form).then(data => {
+        dispatch('getGroupInfo', form.groupId)
+        return data
+      })
     }
   },
   getters: {

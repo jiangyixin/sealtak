@@ -1,7 +1,7 @@
 <template>
   <div class="choice-block">
-    <input @change="uploadToQiniu" class="choice-image" type="file" accept="image/*">
-    <icon name="image"></icon>
+    <input id="file" @change="uploadToQiniu" class="choice-image" type="file" accept="image/*">
+    <label class="file-label" for="file"><icon name="image"></icon></label>
   </div>
 </template>
 
@@ -82,10 +82,13 @@
     .choice-image {
       position: absolute;
       display: inline-block;
-      font-size: 100px;
       width: 20px;
       height: 20px;
       opacity: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .file-label {
       cursor: pointer;
     }
   }

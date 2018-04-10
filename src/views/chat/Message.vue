@@ -7,7 +7,7 @@
       <div class="normal-ntf" :class="{ me: isMe }">
         <div class="face"><img :src="owner.headimgurl" alt=""></div>
         <div class="info">
-          <div class="name" v-if="!isMe">{{ owner.nickname }}</div>
+          <div class="name">{{ owner.nickname }}</div>
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
             <img class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">

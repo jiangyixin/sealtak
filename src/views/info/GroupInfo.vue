@@ -48,7 +48,8 @@
       return {
         conversationType: '3',
         groupInfo: {},
-        groupMembers: []
+        groupMembers: [],
+        myGroupSetting: {}
       }
     },
     created () {
@@ -61,6 +62,9 @@
         })
         this.$store.dispatch('getGroupMembers', this.groupId).then(data => {
           this.groupMembers = data
+        })
+        this.$store.dispatch('getMyGroupSetting', this.groupId).then(data => {
+          this.myGroupSetting = data
         })
       },
       toChat () {
