@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="{ name: 'Chat', params: { targetId: info.targetId, conversationType: info.conversationType } }" class="conversation">
+  <router-link v-if="info.isExist" :to="{ name: 'Chat', params: { targetId: info.targetId, conversationType: info.conversationType } }" class="conversation">
     <div class="face"><img :src="info.headimgurl" alt=""></div>
     <div class="info">
       <div class="name">{{ info.nickname }}</div>
@@ -39,10 +39,12 @@
         }
         switch (conversation.conversationType) {
           case 1:
+            info.isExist = !!this.objFriends[conversation['targetId']]
             info.headimgurl = this.objFriends[conversation['targetId']] && this.objFriends[conversation['targetId']].headimgurl
             info.nickname = this.objFriends[conversation['targetId']] && this.objFriends[conversation['targetId']].nickname
             break;
           case 3:
+            info.isExist = !!this.objGroups[conversation['targetId']]
             info.headimgurl = this.objGroups[conversation['targetId']] && this.objGroups[conversation['targetId']].groupHeadimgurl
             info.nickname = this.objGroups[conversation['targetId']] && this.objGroups[conversation['targetId']].groupName
             break;
@@ -124,7 +126,7 @@
     list-style: none;
     padding-left: 0;
     .conversation-item {
-      border-bottom: 1px solid #e1e9f1;
+
     }
     .conversation {
       display: flex;
@@ -134,6 +136,7 @@
       cursor: pointer;
       text-decoration: inherit;
       color: inherit;
+      border-bottom: 1px solid #e1e9f1;
       &:active,
       &:hover {
         background-color: #ebf2f7;

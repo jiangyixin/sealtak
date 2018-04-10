@@ -13,7 +13,7 @@
           v-model="bulletin">
         </el-input>
         <div class="text-right">
-          <el-button @click="sendToAll" :disabled="disabledButton && !canEdit">发布</el-button>
+          <el-button @click="sendToAll" :disabled="(!hasBulletin || !canEdit)">发布</el-button>
         </div>
       </div>
     </el-main>
@@ -35,8 +35,8 @@
       }
     },
     computed: {
-      disabledButton () {
-        return !this.bulletin.trim()
+      hasBulletin () {
+        return !!this.bulletin.trim()
       },
       canEdit () {
         let canEdit = false
@@ -72,30 +72,29 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let conversation = {
-            conversationType: 3,
-            targetId: this.groupId + '',
-            message: {
-              content: '@所有人 ' + this.bulletin.trim(),
-              extra: ''
-            },
-            at: true
-          }
-          this.$store.dispatch('sendTextMsg', conversation).then(data => {
-            console.log(data)
-            this.$message({
-              type: 'success',
-              message: '发布成功!'
-            })
-          }).catch(error => {
-            console.log(error)
-          })
           let form = {
             groupId: this.groupId,
             notice: this.bulletin
           }
           this.$store.dispatch('updateGroupSetting', form).then(data => {
-
+            let conversation = {
+              conversationType: 3,
+              targetId: this.groupId + '',
+              message: {
+                content: '@所有人 ' + this.bulletin.trim(),
+                extra: ''
+              },
+              at: true
+            }
+            this.$store.dispatch('sendTextMsg', conversation).then(data => {
+              console.log(data)
+              this.$message({
+                type: 'success',
+                message: '发布成功!'
+              })
+            }).catch(err => {
+              console.log(err)
+            })
           })
         })
       },

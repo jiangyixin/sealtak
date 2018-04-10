@@ -63,58 +63,7 @@
     list-style: none;
     padding-left: 0;
     .conversation-item {
-      border-bottom: 1px solid #e1e9f1;
-    }
-    .conversation {
-      display: flex;
-      align-items: flex-start;
-      justify-content: start;
-      padding: 8px 10px;
-      cursor: pointer;
-      text-decoration: inherit;
-      color: inherit;
-      &:active,
-      &:hover {
-        background-color: #ebf2f7;
-      }
-      .face {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        overflow: hidden;
-        margin-right: 5px;
-        img {
-          width: 100%;
-          height: 100%;
-        }
-      }
-      .info {
-        flex: 1;
-        font-size: 15px;
-        .name {
-          margin-bottom: 2px;
-        }
-        .msg {
-          font-size: 14px;
-          color: #999;
-        }
-      }
-      .extra {
-        font-size: 13px;
-        .date {
-          color: #999;
-          margin-bottom: 5px;
-        }
-        .num {
-          font-size: 12px;
-          display: inline-block;
-          padding: 2px 6px;
-          background-color: #09f;
-          border-radius: 15px;
-          text-align: center;
-          color: #fff;
-        }
-      }
+
     }
   }
 </style>
