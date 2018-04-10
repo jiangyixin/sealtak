@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-import Vue from 'vue'
 import store from '../store'
 import { Message, MessageBox } from 'element-ui'
 

@@ -1,5 +1,6 @@
 import store from '../store'
 import { getConversations, getTotalUnreadCount } from './rcMsg'
+import { Message, MessageBox } from 'element-ui'
 
 export function init(params, callbacks, modules) {
   var appKey = params.appKey;
@@ -58,16 +59,31 @@ export function init(params, callbacks, modules) {
         case RongIMLib.ConnectionStatus["NETWORK_UNAVAILABLE"]:
         case 3:
           console.log("网络不可用")
+          Message({
+            message: '网络不可用',
+            type: 'error',
+            duration: 5 * 1000
+          })
           break;
 
         case RongIMLib.ConnectionStatus["CONNECTION_CLOSED"]:
         case 4:
           console.log("未知原因，连接关闭")
+          Message({
+            message: '未知原因，连接关闭',
+            type: 'error',
+            duration: 5 * 1000
+          })
           break;
 
         case RongIMLib.ConnectionStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"]:
         case 6:
           console.log("用户账户在其他设备登录，本机会被踢掉线")
+          Message({
+            message: '用户账户在其他设备登录，本机会被踢掉线',
+            type: 'error',
+            duration: 5 * 1000
+          })
           break;
 
         case RongIMLib.ConnectionStatus["DOMAIN_INCORRECT"]:

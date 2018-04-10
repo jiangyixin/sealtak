@@ -10,7 +10,7 @@
           <div class="name">{{ owner.nickname }}</div>
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
-            <img class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="'data:image/png;base64,' + rcMessage.content.content">
+            <img class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
             <div v-else-if="rcMessage.objectName == 'RC:VcMsg'">[语音消息]</div>
             <div v-else="">[其他消息]</div>
           </div>
@@ -62,7 +62,7 @@
             handledMsg.html = content
             break;
           case 'RC:ImgMsg':
-            handledMsg.html = '[图片]'
+            handledMsg.html = 'data:image/png;base64,' + message.content
             break;
           case 'RC:VcMsg':
             handledMsg.html = '[语音]'
@@ -100,50 +100,7 @@
 
     },
     methods: {
-      handleRCMsg (rcMsg) {
-        let handledMsg = rcMsg
-        let message = rcMsg.content
-        switch (rcMsg.objectName) {
-          case 'RC:TxtMsg':
-            var content = message.content.replace(/</gi, '&lt;').replace(/>/gi, '&gt;');
-            if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.emojiToHTML) {
-              content = RongIMLib.RongIMEmoji.emojiToHTML(content)
-            }
-            handledMsg.html = content
-            break;
-          case 'RC:ImgMsg':
-            handledMsg.html = '[图片]'
-            break;
-          case 'RC:VcMsg':
-            info.msgContent = '[语音]'
-            break;
-          case 'RC:ImgTextMsg':
-            info.msgContent = '[图文]'
-            break;
-          case 'RC:LBSMsg':
-            info.msgContent = '[位置]'
-            break;
-          case 'RC:FileMsg':
-            info.msgContent = '[文件]'
-            break;
-          case 'RC:CmdNtf':
-          case 'RC:ContactNtf':
-            info.msgContent = '[通知消息]'
-            break;
-          case 'RC:InfoNtf':
-            info.msgContent = message.message
-            break;
-          case 'RC:GrpNtf':
-            info.msgContent = message.message
-            break;
-          case 'RC:DizNtf':
 
-            break;
-          default:
-
-            break;
-        }
-      }
     }
   }
 </script>
@@ -182,6 +139,10 @@
           font-family: inherit;
           margin: 0;
           white-space: pre;
+        }
+        .img-msg {
+          max-width: 100%;
+          max-height: 500px;
         }
       }
     }

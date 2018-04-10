@@ -1,67 +1,94 @@
 <template>
-  <div v-if="value" ref="emojoBox" class="emojo-box">
-    <template v-for="(emojo, index) in emojoList">
-      <span @click="handleInput(emojo)" class="emojo" v-html="symbolToHTML(emojo.symbol)"></span>
-    </template>
+  <div class="choice-block">
+    <input @change="uploadToQiniu" class="choice-image" type="file" accept="image/*">
+    <icon name="image"></icon>
   </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+  import { getQiniuToken } from '../../api/qiniu'
+  import axios from 'axios'
+  const lrz = require('lrz')
 
   export default {
-    name: 'Emoji',
+    name: 'RcImage',
     props: {
-      value: Boolean
+
+    },
+    computed: {
+      ...mapGetters(['userId'])
     },
     data () {
       return {
-        emojoList: {}
+        percentage: 0,
+        image: {
+          key: '',
+          content: '',
+          imageUri: ''
+        }
       }
     },
     created () {
-      this.emojoList = RongIMLib.RongIMEmoji.list
+
     },
     methods: {
-      symbolToHTML (symbol) {
-        if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.symbolToHTML) {
-          return RongIMLib.RongIMEmoji.symbolToHTML(symbol)
+      uploadToQiniu (e) {
+        let file = e.target.files[0]
+        if (file) {
+          lrz(file).then(ret => {
+            let param = new FormData()
+            param.append('file', ret.file, file.name)
+            getQiniuToken().then(data => {
+              param.append('token', data.token)
+              param.append('key', `sealtalk/${this.userId}/${file.name}`)
+              let config = {
+                headers:{'Content-Type':'multipart/form-data'}
+              }
+              axios.post('https://upload.qiniu.com/', param, config).then(resp => {
+                console.log('-----上传图片成功---', resp)
+                this.image.key = resp.data.key
+                this.image.imageUri = resp.data.url
+                this.image.content = ret.base64.replace('data:image/jpeg;base64,', '')
+                this.$emit('execCommandImage', this.image)
+              }).catch(err => {
+                console.log('-----上传图片失败---', err)
+              })
+            }).catch(err => {
+              console.log('获取token失败', err)
+            })
+          }).catch(err => {
+            console.log('压缩图片失败', err)
+          })
         }
-      },
-      handleInput (emojo) {
-        this.$emit('execCommandEmojo', emojo.symbol)
       }
-    },
-    mounted:function () {
-      let that = this
-      this.globalClick(function (e) {
-        if (that.$refs.emojoBox && !that.$refs.emojoBox.contains(e.target)) {
-          console.log('globalClick-update:value')
-          that.$emit('update:value', false)
-        }
-      })
     }
   }
 </script>
 
 <style scoped rel="stylesheet/scss" lang="scss">
 
-  .emojo-box {
+  .progress-row {
     position: absolute;
-    background-color: #fff;
-    bottom: 38px;
-    width: 388px;
-    padding: 5px;
-    border: 1px solid #D9DADC;
-    z-index: 1000;
-    border-radius: 4px;
-    .emojo {
+    padding: 0 15px 5px 2px;
+    top: -20px;
+    right: 45px;
+    left: 22px;
+  }
+  .choice-block {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    .choice-image {
+      position: absolute;
       display: inline-block;
-      border-radius: 2px;
-      font-size: 16px;
-      &:hover, &:active, &:focus {
-        background-color: #ddd;
-      }
+      font-size: 100px;
+      width: 20px;
+      height: 20px;
+      opacity: 0;
+      cursor: pointer;
     }
   }
+
 
 </style>

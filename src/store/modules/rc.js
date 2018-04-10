@@ -1,5 +1,5 @@
 import { getRCToken } from '../../api/user'
-import { getHistoryMsg, sendTextMsg, clearUnreadCount } from '../../api/rcMsg'
+import { getHistoryMsg, sendTextMsg, sendImageMsg, clearUnreadCount } from '../../api/rcMsg'
 import cache from '../../utils/sessionStorage'
 
 const rc = {
@@ -133,10 +133,23 @@ const rc = {
       }
     },
     sendTextMsg({commit, state}, conversation) {
-      return sendTextMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at).then((message) => {
+      return sendTextMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at)
+        .then((message) => {
+        commit('ADD_NEW_HISTORY', message)
+        return message
+      }).catch((info) => {
+        return Promise.resolve(info)
+      })
+    },
+    sendImageMsg({commit, state}, conversation) {
+      return sendImageMsg(conversation.conversationType, conversation.targetId, conversation.message, conversation.at)
+        .then((message) => {
         commit('ADD_NEW_HISTORY', message)
         return message
       })
+      //   .catch((info) => {
+      //     throw info
+      // })
     },
     clearUnreadCount({commit}, conversation) {
       return clearUnreadCount(conversation.conversationType, conversation.targetId).then(() => {

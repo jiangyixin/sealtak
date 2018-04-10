@@ -1,3 +1,5 @@
+import { Message } from 'element-ui'
+
 let msgTypes = {
   1: RongIMLib.ConversationType.PRIVATE,            // 二人单聊会话类型
   2: RongIMLib.ConversationType.DISCUSSION,         // 讨论组会话类型
@@ -71,11 +73,21 @@ export function getHistoryMsg(msgType, targetId, timestrap = null, count = 20) {
   })
 }
 
-
+export function sendImageMsg(msgType, targetId, message, at) {
+  let rcMsg = new RongIMLib.ImageMessage(message)
+  return sendMsg(msgType, targetId, rcMsg, at).then(message => {
+    return message
+  })
+}
 
 export function sendTextMsg(msgType, targetId, message, at) {
-
   let rcMsg = new RongIMLib.TextMessage(message)
+  return sendMsg(msgType, targetId, rcMsg, at).then(message => {
+    return message
+  })
+}
+
+let sendMsg = function (msgType, targetId, rcMsg, at) {
   let conversationtype = msgTypes[msgType]
   return new Promise((resolve, reject) => {
     RongIMClient.getInstance().sendMessage(conversationtype, targetId, rcMsg, {
@@ -110,7 +122,12 @@ export function sendTextMsg(msgType, targetId, message, at) {
               break;
           }
           console.log('发送失败:' + info);
-          reject([errorCode, message])
+          Message({
+            message: '发送失败:' + info,
+            type: 'error',
+            duration: 5 * 1000
+          })
+          reject(info)
         }
       }, at
     )

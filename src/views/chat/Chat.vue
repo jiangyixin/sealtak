@@ -22,7 +22,9 @@
             <icon name="meh-o"></icon>
             <emojo v-model="showEmojo" v-on:execCommandEmojo="execCommandEmojo" @update:value="val => showEmojo = val"></emojo>
           </a>
-          <div class="operate-item"><icon name="image"></icon></div>
+          <div class="operate-item">
+            <rc-image v-on:execCommandImage="sendImageMessage"></rc-image>
+          </div>
         </div>
         <div class="message-form">
           <el-input
@@ -42,6 +44,7 @@
 
 <script>
   import Emojo from './Emoji.vue'
+  import RcImage from './Image.vue'
   import Message from './Message.vue'
   import { mapGetters } from 'vuex'
   let moment = require('moment')
@@ -49,7 +52,7 @@
   export default {
     name: 'Chat',
     components: {
-      Message, Emojo
+      Message, Emojo, RcImage
     },
     props: {
       conversationType: {
@@ -211,6 +214,25 @@
       execCommandEmojo (symbol) {
         this.$replyText.focus()
         document.execCommand('insertText', 'false', symbol)
+      },
+      sendImageMessage (image) {
+        let conversation = {
+          conversationType: this.curConversation.conversationType,
+          targetId: this.curConversation.targetId,
+          message: {
+            content: image.content,
+            uri: image.uri,
+            extra: ''
+          },
+          at: false
+        }
+        this.$store.dispatch('sendImageMsg', conversation).then(data => {
+          console.log(data)
+          this.refreshChatroom()
+        })
+//          .catch((info) => {
+//          console.log('sendImageMessage', info)
+//        })
       }
     },
     filters: {
@@ -302,6 +324,7 @@
   }
 
   .el-footer {
+    position: relative;
     background-color: #fff;
     .input-box {
       height: 100%;
@@ -323,6 +346,9 @@
             color: #38a0fe;
           }
         }
+      }
+      .progress-row {
+
       }
       .message-form {
         display: flex;
