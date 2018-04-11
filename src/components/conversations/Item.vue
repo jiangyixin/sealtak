@@ -80,6 +80,9 @@
           case 'RC:ContactNtf':
             info.msgContent = '[通知消息]'
             break;
+          case 'RC:RcCmd':
+            info.msgContent = '[一条消息被撤回]'
+            break;
           case 'RC:InfoNtf':
             info.msgContent = message.message
             break;

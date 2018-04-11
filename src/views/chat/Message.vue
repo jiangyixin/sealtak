@@ -11,13 +11,21 @@
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
             <img @click="previewImage(handledMessage.html)" class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
-            <div v-else-if="rcMessage.objectName == 'RC:VcMsg'">[语音消息]</div>
+            <div v-else-if="rcMessage.objectName == 'RC:VcMsg'">
+              <div @click="playVoice(rcMessage)" class="voice-msg">
+                <span class="icon" :class="{ playing: isPlayVoice }"></span>
+                <span class="duration">{{ rcMessage.content.duration }}'</span>
+              </div>
+            </div>
             <div v-else="">[其他消息]</div>
           </div>
         </div>
       </div>
     </template>
     <template v-else-if="rcMessage.objectName == 'RC:TypSts'"></template>
+    <template v-else-if="rcMessage.objectName == 'RC:RcCmd'">
+      <div class="info-ntf" v-html="handledMessage.html"></div>
+    </template>
     <template v-else="">
       <div>
         {{ rcMessage.objectName }}
@@ -47,6 +55,7 @@
     data () {
       return {
 //        message: {}
+        isPlayVoice: false
       }
     },
     computed: {
@@ -55,7 +64,7 @@
         let message = handledMsg.content
         switch (handledMsg.objectName) {
           case 'RC:TxtMsg':
-            var content = message.content.replace(/</gi, '&lt;').replace(/>/gi, '&gt;');
+            let content = message.content.replace(/</gi, '&lt;').replace(/>/gi, '&gt;')
             if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.emojiToHTML) {
               content = RongIMLib.RongIMEmoji.emojiToHTML(content)
             }
@@ -89,6 +98,9 @@
           case 'RC:DizNtf':
 
             break;
+          case 'RC:RcCmd':
+            handledMsg.html = '消息被撤回'
+            break;
           default:
 
             break;
@@ -103,6 +115,18 @@
       previewImage (imgUrl) {
         this.$emit('showDialogImage', imgUrl)
       },
+      playVoice (rcMessage) {
+        this.isPlayVoice = true
+        let that = this
+        let audioFile = rcMessage.content.content
+        let duration = audioFile.length / 1024
+        RongIMLib.RongIMVoice.preLoaded(audioFile, function() {
+          RongIMLib.RongIMVoice.play(audioFile, duration)
+          setTimeout(function () {
+            that.isPlayVoice = false
+          }, rcMessage.content.duration * 1000)
+        })
+      }
     }
   }
 </script>
@@ -113,6 +137,7 @@
     .info-ntf {
       text-align: center;
       color: #999;
+      font-size: 14px;
     }
     .normal-ntf {
       display: flex;
@@ -153,7 +178,47 @@
           max-height: 300px;
           cursor: pointer;
         }
+        .voice-msg {
+          display: flex;
+          justify-content: space-between;
+          background-color: #7cbcff;
+          width: 100px;
+          border-radius: 5px;
+          color: #fff;
+          cursor: pointer;
+          .icon {
+            width: 32px;
+            height: 32px;
+            background-image: url("../../assets/image/yuyin.png");
+            background-repeat: no-repeat;
+            background-position: -3px 0; // -33
+            background-size: auto 100%;
+            &.playing {
+              animation: voiceplay 2s infinite step-start;
+            }
+          }
+          .duration {
+            height: 32px;
+            line-height: 32px;
+            margin-right: 5px;
+          }
+        }
       }
+    }
+  }
+
+  @keyframes voiceplay{
+    0%, 100%{
+      background-position: -3px 0;
+    }
+    25%{
+      background-position: -35px 0;
+    }
+    50%{
+      background-position: -64px 0;
+    }
+    75%{
+      background-position: -91px 0;
     }
   }
 

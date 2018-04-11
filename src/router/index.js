@@ -21,23 +21,23 @@ export default new Router({
       })
     },
     {
-      path: '/user-info/:userId/:applyFrom/:fromRemark',
+      path: '/user-info/:userId',
       name: 'UserInfo',
       component: UserInfo,
       props: (router) => ({
         userId: router.params.userId,
-        applyFrom: router.params.applyFrom,
-        fromRemark: router.params.fromRemark
+        applyFrom: router.query.applyFrom,
+        fromRemark: router.query.fromRemark
       })
     },
     {
-      path: '/apply-friend/:friendUserId/:applyFrom/:fromRemark',
+      path: '/apply-friend/:friendUserId',
       name: 'ApplyFriend',
       component: ApplyFriend,
       props: (router) => ({
         friendUserId: router.params.friendUserId,
-        applyFrom: router.params.applyFrom,
-        fromRemark: router.params.fromRemark
+        applyFrom: router.query.applyFrom,
+        fromRemark: router.query.fromRemark
       })
     },
     {

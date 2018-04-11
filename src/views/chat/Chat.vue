@@ -32,7 +32,9 @@
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }"
             placeholder="请输入内容"
+            
             @keyup.ctrl.enter.native="sendMessage"
+            resize="none"
             v-model="replyText">
           </el-input>
           <el-button class="btn-send" type="text" @click="sendMessage">发送</el-button>
@@ -89,7 +91,6 @@
       ...mapGetters(['initStatus', 'userInfo', 'curConversation', 'userId'])
     },
     created () {
-      console.log('-----created-----')
       this.page.first = true
       let conversation = {
         conversationType: this.conversationType,
@@ -257,7 +258,7 @@
       }
     },
     watch: {
-      targetId (val) {
+      targetId (val, oldVal) {
         this.page.first = true
         let conversation = {
           conversationType: this.conversationType,

@@ -27,6 +27,13 @@ const rc = {
     SET_UNREAD_COUNT: (state, unreadCount) => {
       state.unreadCount = unreadCount
     },
+    RESET_UNREAD_COUNT: (state) => {
+      let unreadCount = 0
+      state.conversations.map(conversation => {
+        unreadCount += conversation.unreadMessageCount
+      })
+      state.unreadCount = unreadCount
+    },
     UPDATE_UNREAD_COUNT: (state, newCount) => {
       state.unreadCount = state.unreadCount + newCount
     },
@@ -158,6 +165,7 @@ const rc = {
     clearUnreadCount({commit}, conversation) {
       return clearUnreadCount(conversation.conversationType, conversation.targetId).then(() => {
         commit('CLEAR_UNREAD_COUNT', conversation)
+        return true
       })
     }
   },

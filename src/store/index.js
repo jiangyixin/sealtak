@@ -19,4 +19,12 @@ const store = new Vuex.Store({
   getters
 })
 
+store.subscribe((mutation, state) => {
+  if (mutation.type == 'RECEIVE_NEW_MESSAGE' && state.rc.curConversation.targetId == mutation.payload.targetId) {
+    store.dispatch('clearUnreadCount', state.rc.curConversation).then(data => {
+
+    })
+  }
+})
+
 export default store

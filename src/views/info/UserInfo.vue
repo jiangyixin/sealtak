@@ -60,7 +60,8 @@
       },
       toApplyFriend () {
         this.$router.push({name: 'ApplyFriend', params: {
-          friendUserId: this.userId,
+          friendUserId: this.userId
+        }, query: {
           applyFrom: this.applyFrom,
           fromRemark: this.fromRemark
         }})

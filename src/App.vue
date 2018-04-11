@@ -50,7 +50,6 @@
           },
           receiveNewMessage: (message) => {
             console.log(message)
-            that.$store.commit('UPDATE_UNREAD_COUNT', 1)
             that.$store.commit('RECEIVE_NEW_MESSAGE', message)
           },
           getCurrentUser: ({userId}) => {
