@@ -77,12 +77,16 @@
             notice: this.bulletin
           }
           this.$store.dispatch('updateGroupSetting', form).then(data => {
+            let mentioneds = new RongIMLib.MentionedInfo()
+            mentioneds.type = RongIMLib.MentionedType.ALL
+            mentioneds.userIdList = []
             let conversation = {
               conversationType: 3,
               targetId: this.groupId + '',
               message: {
                 content: '@所有人 ' + this.bulletin.trim(),
-                extra: ''
+                extra: '',
+                mentionedInfo: mentioneds
               },
               at: true
             }

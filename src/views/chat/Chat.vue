@@ -32,7 +32,6 @@
             type="textarea"
             :autosize="{ minRows: 3, maxRows: 3 }"
             placeholder="请输入内容"
-            
             @keyup.ctrl.enter.native="sendMessage"
             resize="none"
             v-model="replyText">
@@ -117,6 +116,9 @@
     methods: {
       back () {
         history.back()
+      },
+      atMember () {
+        console.log('---@---')
       },
       showDialogImage (imgUrl) {
         this.dialogImageUrl = imgUrl
