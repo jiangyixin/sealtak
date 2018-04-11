@@ -6,6 +6,7 @@ import GroupInfo from '../views/info/GroupInfo.vue'
 import Chat from '../views/chat/Chat.vue'
 import Bulletin from '../views/group/Bulletin.vue'
 import ApplyFriend from '../views/friend/ApplyFriend.vue'
+import SearchFriend from '../views/friend/SearchFriend.vue'
 
 Vue.use(Router)
 
@@ -39,6 +40,11 @@ export default new Router({
         applyFrom: router.query.applyFrom,
         fromRemark: router.query.fromRemark
       })
+    },
+    {
+      path: '/search-friend',
+      name: 'SearchFriend',
+      component: SearchFriend
     },
     {
       path: '/group-info/:groupId',

@@ -33,7 +33,7 @@
         let info = {
           targetId: conversation.targetId,
           conversationType: conversation.conversationType,
-          sentTime: conversation.sentTime,
+          sentTime: conversation.latestMessage.sentTime,
           unreadMessageCount: conversation.unreadMessageCount,
           latestMessage: conversation.latestMessage
         }

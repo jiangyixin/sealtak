@@ -41,6 +41,7 @@
         }
         init(params, {
           getInstance: (instance) => {
+            console.log('---instance---')
             getConversations().then(list => {
               this.$store.commit('SET_CONVERSATIONS', list)
             })
@@ -49,8 +50,8 @@
             })
           },
           receiveNewMessage: (message) => {
-            console.log(message)
-            that.$store.commit('RECEIVE_NEW_MESSAGE', message)
+//            console.log('---receiveNewMessage---message:', message, that.$store.getters.conversations[0].unreadMessageCount)
+//            that.$store.commit('RECEIVE_NEW_MESSAGE', message)
           },
           getCurrentUser: ({userId}) => {
 

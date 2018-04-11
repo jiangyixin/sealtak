@@ -1,5 +1,4 @@
 import store from '../store'
-import { getConversations, getTotalUnreadCount } from './rcMsg'
 import { Message, MessageBox } from 'element-ui'
 
 export function init(params, callbacks, modules) {
