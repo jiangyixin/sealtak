@@ -11,9 +11,9 @@
             :default-openeds="openeds"
             @open="handleOpen"
             @close="handleClose">
-            <el-menu-item index="1">
-              <span slot="title">新消息</span>
-            </el-menu-item>
+            <!--<el-menu-item index="1">-->
+              <!--<span slot="title">新消息</span>-->
+            <!--</el-menu-item>-->
             <el-submenu index="2">
               <template slot="title">
                 <span>群组</span>

@@ -1,7 +1,11 @@
 <template>
   <el-aside width="70px" class="toolbar" style="height: 100%; float: left;">
     <div @click="toggleSidebar('Conversations')" class="bar-item" :class="[curSidebar == 'Conversations' ? 'active' : '']">
-      <icon name="weixin"></icon>
+      <!--<icon name="weixin"></icon>-->
+      <!--<span v-if="unreadCount" class="badge">{{ unreadCount }}</span>-->
+      <el-badge :value="unreadCount" class="item">
+        <icon name="weixin"></icon>
+      </el-badge>
     </div>
     <div @click="toggleSidebar('Contacts')" class="bar-item" :class="[curSidebar == 'Contacts' ? 'active' : '']">
       <icon name="address-book-o"></icon>
@@ -24,7 +28,14 @@
   export default {
     name: 'Sidebar',
     computed: {
-      ...mapGetters(['curSidebar'])
+      ...mapGetters(['curSidebar', 'conversations']),
+      unreadCount () {
+        let count = 0
+        this.conversations.map(conversation => {
+          count += conversation.unreadMessageCount
+        })
+        return count
+      }
     },
     data () {
       return {
@@ -67,6 +78,11 @@
         position: absolute;
         bottom: 0;
         width: 100%;
+      }
+      .el-badge /deep/ .is-fixed {
+        top: 4px;
+        right: -16px;
+        transform: none;
       }
     }
   }

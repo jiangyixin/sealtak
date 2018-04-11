@@ -52,6 +52,7 @@
   import Message from './Message.vue'
   import { mapGetters } from 'vuex'
   let moment = require('moment')
+  import cache from '../../utils/sessionStorage'
 
   export default {
     name: 'Chat',
@@ -87,7 +88,11 @@
       }
     },
     computed: {
-      ...mapGetters(['initStatus', 'userInfo', 'curConversation', 'userId'])
+      ...mapGetters(['initStatus', 'userInfo', 'curConversation', 'userId']),
+      draft () {
+        let key = 'draft-' + this.conversationType + '-' + this.targetId
+        return cache.get(key) || ''
+      }
     },
     created () {
       this.page.first = true
@@ -112,6 +117,19 @@
       this.$chatroom = document.getElementById('chatroom')
       this.$chatroom.addEventListener('scroll', this.fetchHistoricalMessage)
       this.$replyText = document.getElementById('replyText')
+      this.replyText = this.draft
+    },
+    beforeRouteUpdate (to, from, next) {
+      let key = 'draft-' + this.conversationType + '-' + this.targetId
+      cache.set(key, this.replyText)
+      this.replyText = ''
+      next()
+    },
+    beforeRouteLeave (to, from, next) {
+      let key = 'draft-' + this.conversationType + '-' + this.targetId
+      cache.set(key, this.replyText)
+      this.replyText = ''
+      next()
     },
     methods: {
       back () {
@@ -272,6 +290,7 @@
         this.fetchChatMembers()
         this.fetchLatestMessage()
         this.clearUnreadCount()
+        this.replyText = this.draft
       },
       'curConversation.newMsg': function (val, oldVal) {
         this.refreshChatroom()

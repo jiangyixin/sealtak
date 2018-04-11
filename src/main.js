@@ -6,6 +6,8 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import cache from './utils/sessionStorage'
+import localCache from './utils/localStorage'
 
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
@@ -29,6 +31,8 @@ router.beforeEach((to, from, next) => {
   let token = getQueryString('token')
   let userId = getQueryString('userId')
   if (token && userId) {
+    localCache.clear()
+    cache.clear()
     store.commit('SET_TOKEN', token)
     store.commit('SET_USER_ID', userId)
     // 美化url地址
