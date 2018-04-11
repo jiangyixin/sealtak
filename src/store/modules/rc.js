@@ -76,7 +76,7 @@ const rc = {
       if (message.objectName == 'RC:TypSts') {
         return
       }
-      console.log('---RECEIVE_NEW_MESSAGE---', state.conversations[0].unreadMessageCount)
+      console.log('---RECEIVE_NEW_MESSAGE---')
       let index = 0
       for (let i in state.conversations) {
         if (state.conversations[i].targetId == message.targetId) {
@@ -87,6 +87,7 @@ const rc = {
           state.conversations[i].objectName = message.objectName
           state.conversations[i].notificationStatus = message.sentStatus
           state.conversations[i].latestMessageId = message.messageId
+          if (message.type == '')
           // state.conversations[i].unreadMessageCount++
           break
         }

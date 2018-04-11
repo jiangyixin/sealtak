@@ -50,8 +50,8 @@
             })
           },
           receiveNewMessage: (message) => {
-//            console.log('---receiveNewMessage---message:', message, that.$store.getters.conversations[0].unreadMessageCount)
-//            that.$store.commit('RECEIVE_NEW_MESSAGE', message)
+            console.log('---receiveNewMessage---message:', message, that.$store.getters.conversations[0].unreadMessageCount)
+            that.$store.commit('RECEIVE_NEW_MESSAGE', message)
           },
           getCurrentUser: ({userId}) => {
 
