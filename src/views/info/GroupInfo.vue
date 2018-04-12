@@ -23,7 +23,7 @@
       <div v-if="!isManage" class="operate-block">
         <el-button type="text" @click="toBulletin()">群公告</el-button>
       </div>
-      <div v-if="isManage" class="operate-block">
+      <div v-if="isManage && roles.indexOf(myGroupSetting.role) > -1" class="operate-block">
         <el-button type="text" @click="dialogFormVisible = true">添加新成员</el-button>
       </div>
       <ul class="group-member-list">
@@ -34,13 +34,13 @@
               <div class="name">{{ member.nickname }}</div>
               <el-tag v-if="member.roleName" type="info" size="small">{{ member.roleName }}</el-tag>
             </div>
-            <div v-if="isManage" class="operate">
+            <div v-if="isManage && roles.indexOf(myGroupSetting.role) > -1" class="operate">
               <el-button @click.prevent.stop="kickingMember(member, index)" type="danger" icon="el-icon-delete" size="mini" :circle="true"></el-button>
             </div>
           </router-link>
         </li>
       </ul>
-      <el-dialog title="添加新成员" :visible.sync="dialogFormVisible">
+      <el-dialog v-if="isManage && roles.indexOf(myGroupSetting.role) > -1" title="添加新成员" :visible.sync="dialogFormVisible">
         <el-form :model="form">
           <el-form-item>
             <el-input v-model="form.target" placeholder="学号/手机号" auto-complete="off"></el-input>
