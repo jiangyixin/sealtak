@@ -53,6 +53,16 @@ export default new Router({
       props: true
     },
     {
+      path: '/group-info/:groupId/manage',
+      name: 'GroupInfoManage',
+      component: GroupInfo,
+      props: true,
+      meta: {
+        isManage: true,
+        roles: ['teacher', 'tutor']
+      }
+    },
+    {
       path: '/group-bulletin/:groupId',
       name: 'Bulletin',
       component: Bulletin,

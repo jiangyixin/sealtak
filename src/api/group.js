@@ -37,3 +37,21 @@ export function getMyGroupSetting(groupId) {
   })
 }
 
+export function kickingMembers(groupId, params) {
+  return axios({
+    url: `/groups/${groupId}/kicking`,
+    method: 'delete',
+    data: {
+      userIds: params.userIds
+    }
+  })
+}
+
+export function joinMembers(groupId, data) {
+  return axios({
+    url: `/groups/${groupId}/join`,
+    method: 'post',
+    data: data
+  })
+}
+

@@ -1,4 +1,4 @@
-import { getMyGroups, getGroupInfo, getGroupMembers, updateGroupSetting, getMyGroupSetting } from '../../api/group'
+import { getMyGroups, getGroupInfo, getGroupMembers, updateGroupSetting, getMyGroupSetting, kickingMembers, joinMembers } from '../../api/group'
 import Vue from 'vue'
 
 const group = {
@@ -18,6 +18,9 @@ const group = {
           Vue.set(state.objGroups, group['groupId'], group)
         }
       }
+    },
+    DELETE_OBJ_GROUPS_ITEM: (state, [groupId, key]) => {
+      delete state.objGroups[groupId][key]
     },
     SET_GROUP_MEMBERS: (state, [groupId, members]) => {
       if (!state.objGroups[groupId]) {
@@ -70,6 +73,18 @@ const group = {
           return data
         })
       }
+    },
+    kickingMembers({commit}, [groupId, params]) {
+      return kickingMembers(groupId, params).then(data => {
+        commit('DELETE_OBJ_GROUPS_ITEM', [groupId, 'members'])
+        return data
+      })
+    },
+    joinMembers({commit}, [groupId, form]) {
+      return joinMembers(groupId, form).then(data => {
+        commit('DELETE_OBJ_GROUPS_ITEM', [groupId, 'members'])
+        return data
+      })
     },
     getMyGroupSetting({commit, state}, groupId) {
       if (state.objGroups[groupId] && state.objGroups[groupId].mySetting) {
