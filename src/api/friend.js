@@ -35,3 +35,12 @@ export function applyFriend(form) {
   })
 }
 
+export function searchUser(target) {
+  return axios({
+    url: `/users/search`,
+    method: 'get',
+    params: {
+      target: target
+    }
+  })
+}

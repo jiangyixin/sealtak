@@ -70,7 +70,7 @@
               type: 'success',
               message: '发送成功!'
             })
-            this.$router.replace({name: 'UserInfo', params: {userId: this.friendUserId}, query: {applyFrom: this.applyFrom, fromRemark: this.fromRemark}})
+            this.$router.back()
           }).catch(error => {
             console.log(error)
           })
