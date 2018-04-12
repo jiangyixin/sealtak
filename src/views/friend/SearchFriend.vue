@@ -7,7 +7,7 @@
     <el-main>
       <div class="search-form">
         <el-input placeholder="学号/手机号" v-model="keyword">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-button @click="searchUser(keyword)" slot="append" icon="el-icon-search"></el-button>
         </el-input>
       </div>
       <div class="friends-list">

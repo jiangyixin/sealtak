@@ -11,15 +11,16 @@
             :default-openeds="openeds"
             @open="handleOpen"
             @close="handleClose">
-            <!--<el-menu-item index="1">-->
+            <el-menu-item index="1">
               <!--<span slot="title">新消息</span>-->
-            <!--</el-menu-item>-->
+              <el-input placeholder="搜索" v-model="keyword"></el-input>
+            </el-menu-item>
             <el-submenu index="2">
               <template slot="title">
                 <span>群组</span>
               </template>
               <el-menu-item-group key="group">
-                <template v-for="(group, index) in myGroups">
+                <template v-for="(group, index) in filterGroups">
                   <el-menu-item :route="{ name: 'GroupInfo', params: { groupId: group.groupId } }" :key="group.groupId" :index="group.groupId|toString">{{ group.groupName }}</el-menu-item>
                 </template>
               </el-menu-item-group>
@@ -28,7 +29,7 @@
               <template slot="title">
                 <span>联系人</span>
               </template>
-              <template v-for="(group, index) in groupFriends">
+              <template v-for="(group, index) in groupByZh(filterFriends)">
                 <el-menu-item-group :key="group.letter">
                   <template slot="title">{{ group.letter }}</template>
                   <template v-for="(friend, index) in group.data">
@@ -46,16 +47,29 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { groupByZh } from '../../utils/filter'
+  import cache from '../../utils/sessionStorage'
 
   export default {
     name: 'Contacts',
     data () {
       return {
-        openeds: ['1', '2', '3']
+        openeds: ['1', '2', '3'],
+        keyword: ''
       }
     },
     computed: {
-      ...mapGetters(['groupFriends', 'myGroups'])
+      ...mapGetters(['myGroups', 'myFriends']),
+      filterGroups () {
+        return this.myGroups.filter(group => {
+          return group.groupName.toLowerCase().indexOf(this.keyword) !== -1
+        })
+      },
+      filterFriends () {
+        return this.myFriends.filter(friend => {
+          return friend.nickname.toLowerCase().indexOf(this.keyword) !== -1
+        })
+      }
     },
     filters: {
       toString (val = '') {
@@ -63,6 +77,7 @@
       }
     },
     created () {
+      this.keyword = cache.get('contact-keyword') || ''
       this.$store.dispatch('getMyFriends', {applyStatus: 'passed'}).then(resp => {
 
       })
@@ -70,7 +85,13 @@
 
       })
     },
+    beforeDestroy () {
+      cache.set('contact-keyword', this.keyword)
+    },
     methods: {
+      groupByZh (array) {
+        return groupByZh(array)
+      },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);
       },
