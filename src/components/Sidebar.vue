@@ -3,7 +3,7 @@
     <div @click="toggleSidebar('Conversations')" class="bar-item" :class="[curSidebar == 'Conversations' ? 'active' : '']">
       <!--<icon name="weixin"></icon>-->
       <!--<span v-if="unreadCount" class="badge">{{ unreadCount }}</span>-->
-      <el-badge :value="unreadCount" class="item">
+      <el-badge :value="unreadCount" :max="999" :hidden="!unreadCount" class="item">
         <icon name="weixin"></icon>
       </el-badge>
     </div>

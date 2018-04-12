@@ -32,7 +32,7 @@
             <div class="face"><img :src="member.headimgurl" alt=""></div>
             <div class="info">
               <div class="name">{{ member.nickname }}</div>
-              <el-tag v-if="member.roleName" type="info" size="small">{{ member.roleName }}</el-tag>
+              <el-tag v-if="member.roleName" type="success" size="small">{{ member.roleName }}</el-tag>
             </div>
             <div v-if="isManage && roles.indexOf(myGroupSetting.role) > -1" class="operate">
               <el-button @click.prevent.stop="kickingMember(member, index)" type="danger" icon="el-icon-delete" size="mini" :circle="true"></el-button>
@@ -265,6 +265,9 @@
       cursor: pointer;
       text-decoration: inherit;
       color: inherit;
+      &:hover, &:focus, &:active {
+        background-color: #eee;
+      }
       .face {
         width: 36px;
         height: 36px;
@@ -283,6 +286,7 @@
         border-bottom: 1px solid #e9f0f8;
         .name {
           display: inline-block;
+          margin-right: 5px;
         }
       }
       .operate {
