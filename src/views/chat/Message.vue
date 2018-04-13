@@ -7,7 +7,7 @@
       <div class="normal-ntf" :class="{ me: isMe }">
         <div class="face"><img :src="owner.headimgurl" alt=""></div>
         <div class="info">
-          <div class="name">{{ owner.nickname }}</div>
+          <div class="name">{{ owner.groupNickname || owner.nickname }}</div>
           <div class="msg">
             <pre class="text-msg" v-if="rcMessage.objectName == 'RC:TxtMsg'" v-html="handledMessage.html"></pre>
             <img @click="previewImage(handledMessage.html)" class="img-msg" v-else-if="rcMessage.objectName == 'RC:ImgMsg'" :src="handledMessage.html">
@@ -169,41 +169,43 @@
         .name {
           color: #888;
         }
-        .text-msg {
-          font-family: inherit;
-          margin: 0;
-          white-space: pre-wrap;
-          word-wrap:break-word;
-          word-break:break-all;
-        }
-        .img-msg {
-          max-width: 60%;
-          max-height: 300px;
-          cursor: pointer;
-        }
-        .voice-msg {
-          display: flex;
-          justify-content: space-between;
-          background-color: #7cbcff;
-          width: 100px;
-          border-radius: 5px;
-          color: #fff;
-          cursor: pointer;
-          .icon {
-            width: 32px;
-            height: 32px;
-            background-image: url("../../assets/image/yuyin.png");
-            background-repeat: no-repeat;
-            background-position: -3px 0; // -33
-            background-size: auto 100%;
-            &.playing {
-              animation: voiceplay 2s infinite step-start;
-            }
+        .msg {
+          .text-msg {
+            font-family: inherit;
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap:break-word;
+            word-break:break-all;
           }
-          .duration {
-            height: 32px;
-            line-height: 32px;
-            margin-right: 5px;
+          .img-msg {
+            max-width: 60%;
+            max-height: 300px;
+            cursor: pointer;
+          }
+          .voice-msg {
+            display: flex;
+            justify-content: space-between;
+            background-color: #7cbcff;
+            width: 100px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            .icon {
+              width: 32px;
+              height: 32px;
+              background-image: url("../../assets/image/yuyin.png");
+              background-repeat: no-repeat;
+              background-position: -3px 0; // -33
+              background-size: auto 100%;
+              &.playing {
+                animation: voiceplay 2s infinite step-start;
+              }
+            }
+            .duration {
+              height: 32px;
+              line-height: 32px;
+              margin-right: 5px;
+            }
           }
         }
       }

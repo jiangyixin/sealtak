@@ -69,10 +69,11 @@ export function init(params, callbacks, modules) {
         case 4:
           console.log("未知原因，连接关闭")
           Message({
-            message: '未知原因，连接关闭',
+            message: '未知原因，连接关闭，重新连接中',
             type: 'error',
             duration: 5 * 1000
           })
+          reconnect()
           break;
 
         case RongIMLib.ConnectionStatus["KICKED_OFFLINE_BY_OTHER_CLIENT"]:
@@ -155,13 +156,67 @@ export function init(params, callbacks, modules) {
     onTokenIncorrect: function() {
       console.log('token无效');
       Message({
-        message: 'token无效，请刷新页面',
+        message: 'token无效，请不要在多个处登陆',
         type: 'error',
         duration: 5 * 1000
       })
     },
     onError:function(errorCode) {
       console.log(errorCode);
+    }
+  });
+}
+
+export function reconnect() {
+  let RongIMLib = window.RongIMLib;
+  let RongIMClient = RongIMLib.RongIMClient;
+
+  let start = new Date().getTime();
+  let begin = new Date().getTime();
+  RongIMClient.reconnect({
+    onSuccess: function(userId) {
+      store.commit('SET_INIT_STATUS', true)
+      console.log(`重新链接 成功，用户id：${userId}; ` + start)
+      Message({
+        message: "重新链接 成功",
+        type: 'success',
+        duration: 5 * 1000
+      })
+    },
+    onTokenIncorrect: function() {
+      //console.log('token无效');
+      console.log("重新链接 失败 token无效", start)
+      Message({
+        message: "重新链接 失败 token无效",
+        type: 'error',
+        duration: 5 * 1000
+      })
+    },
+    onError:function(errorCode){
+      var info = '';
+      switch (errorCode) {
+        case RongIMLib.ErrorCode.TIMEOUT:
+          info = '超时';
+          break;
+        case RongIMLib.ErrorCode.UNKNOWN_ERROR:
+          info = '未知错误';
+          break;
+        case RongIMLib.ErrorCode.UNACCEPTABLE_PROTOCOL_VERSION:
+          info = '不可接受的协议版本';
+          break;
+        case RongIMLib.ErrorCode.IDENTIFIER_REJECTED:
+          info = 'appkey不正确';
+          break;
+        case RongIMLib.ErrorCode.SERVER_UNAVAILABLE:
+          info = '服务器不可用';
+          break;
+      }
+      console.log(info);
+      Message({
+        message: info,
+        type: 'error',
+        duration: 5 * 1000
+      })
     }
   });
 }

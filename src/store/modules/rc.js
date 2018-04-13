@@ -87,7 +87,7 @@ const rc = {
           state.conversations[i].objectName = message.objectName
           state.conversations[i].notificationStatus = message.sentStatus
           state.conversations[i].latestMessageId = message.messageId
-          if (message.objectName == 'RC:InfoNtf' && state.conversations[i].unreadMessageCount) {
+          if (message.objectName == 'RC:InfoNtf' && state.conversations[i] && state.conversations[i].unreadMessageCount) {
             state.conversations[i].unreadMessageCount--
           }
           break

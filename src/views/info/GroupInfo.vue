@@ -32,6 +32,7 @@
             <div class="face"><img :src="member.headimgurl" alt=""></div>
             <div class="info">
               <div class="name">{{ member.nickname }}</div>
+              <span v-if="member.groupNickname" class="group-name">({{ member.groupNickname }})</span>
               <el-tag v-if="member.roleName" type="success" size="small">{{ member.roleName }}</el-tag>
             </div>
             <div v-if="isManage && roles.indexOf(myGroupSetting.role) > -1" class="operate">
@@ -287,6 +288,9 @@
         .name {
           display: inline-block;
           margin-right: 5px;
+        }
+        .group-name {
+          color: #999;
         }
       }
       .operate {

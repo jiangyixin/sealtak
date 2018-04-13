@@ -178,7 +178,7 @@
             for (let member of data) {
               this.$set(this.chatMembers, member.userId, {
                 userId: member.userId,
-                nickname: member.nickname,
+                nickname: member.groupNickname || member.nickname,
                 headimgurl: member.headimgurl
               })
               if (this.userId != member.userId) {

@@ -162,7 +162,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         .name {
-          margin-bottom: 2px;
+          margin-bottom: 5px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -171,11 +171,13 @@
           font-size: 14px;
           color: #999;
           overflow: hidden;
-          word-break: break-all;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          max-height: 3em;
+          /*word-break: break-all;*/
+          /*display: -webkit-box;*/
+          /*-webkit-line-clamp: 2;*/
+          /*-webkit-box-orient: vertical;*/
+          /*max-height: 3em;*/
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
       .extra {
