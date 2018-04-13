@@ -154,6 +154,11 @@ export function init(params, callbacks, modules) {
     },
     onTokenIncorrect: function() {
       console.log('token无效');
+      Message({
+        message: 'token无效，请刷新页面',
+        type: 'error',
+        duration: 5 * 1000
+      })
     },
     onError:function(errorCode) {
       console.log(errorCode);

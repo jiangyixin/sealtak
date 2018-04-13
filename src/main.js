@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
   }
   if (!store.getters.token || !store.getters.userId) {
     ElementUI.Message({
-      message: '请先登录再访问',
+      message: '请先登录官网再访问',
       type: 'error',
       duration: 5 * 1000
     })

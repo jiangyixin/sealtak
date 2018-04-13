@@ -166,6 +166,9 @@
       .info {
         flex: 1;
         margin-right: 5px;
+        .name {
+          color: #888;
+        }
         .text-msg {
           font-family: inherit;
           margin: 0;

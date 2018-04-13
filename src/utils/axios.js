@@ -37,8 +37,7 @@ service.interceptors.response.use(
     }
     if ([410].indexOf(res.data.code) !== -1) {
         location.href = process.env.LOGIN_URL
-    } else
-    if (res.data.code !== 200) {
+    } else if (res.data.code !== 200) {
       // 错误提示
       Message({
         message: res.data.tip || res.data.msg,

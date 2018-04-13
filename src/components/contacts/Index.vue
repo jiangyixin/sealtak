@@ -11,9 +11,9 @@
             :default-openeds="openeds"
             @open="handleOpen"
             @close="handleClose">
-            <el-menu-item index="1">
+            <el-menu-item index="1" :disabled="true">
               <!--<span slot="title">新消息</span>-->
-              <el-input placeholder="搜索" v-model="keyword"></el-input>
+              <el-input placeholder="用户名/学号" v-model="keyword"></el-input>
             </el-menu-item>
             <el-submenu index="2">
               <template slot="title">
@@ -62,13 +62,19 @@
       ...mapGetters(['myGroups', 'myFriends']),
       filterGroups () {
         return this.myGroups.filter(group => {
-          return group.groupName.toLowerCase().indexOf(this.keyword) !== -1
+          return group.groupName.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1
         })
       },
       filterFriends () {
-        return this.myFriends.filter(friend => {
-          return friend.nickname.toLowerCase().indexOf(this.keyword) !== -1
-        })
+        if (/[0-9]*/.test(this.keyword) && this.keyword.length == 10) {
+          return this.myFriends.filter(friend => {
+            return friend.studentid == this.keyword
+          })
+        } else {
+          return this.myFriends.filter(friend => {
+            return friend.nickname.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1
+          })
+        }
       }
     },
     filters: {
@@ -106,6 +112,9 @@
 
   .contacts-bar {
     background-color: #f5f8fc;
+    /deep/ .el-menu-item.is-disabled {
+      opacity: 1;
+    }
   }
 
 </style>

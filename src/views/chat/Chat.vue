@@ -36,8 +36,7 @@
             resize="none"
             v-model="replyText">
           </el-input>
-          <el-button class="btn-send" type="text" @click="sendMessage">发送</el-button>
-          <at :visible.sync="showAt" :chatMembers="chatMembers" :active="0"></at>
+          <el-button class="btn-send" type="primary" @click="sendMessage">发送<br>ctrl+enter</el-button>
         </div>
       </div>
     </el-footer>
@@ -51,15 +50,17 @@
   import Emojo from './Emoji.vue'
   import RcImage from './Image.vue'
   import Message from './Message.vue'
-  import At from './At.vue'
   import { mapGetters } from 'vuex'
   let moment = require('moment')
   import cache from '../../utils/sessionStorage'
+  import $ from 'jquery'
+  import '../../assets/lib/caret/jquery.caret.min'
+  import '../../assets/lib/at/js/jquery.atwho.min'
 
   export default {
     name: 'Chat',
     components: {
-      Message, Emojo, RcImage, At
+      Message, Emojo, RcImage
     },
     props: {
       conversationType: {
@@ -87,7 +88,7 @@
         showEmojo: false,
         previewDialogVisible: false,
         dialogImageUrl: '',
-        showAt: false
+        chatNicknames: []
       }
     },
     computed: {
@@ -123,23 +124,24 @@
       this.replyText = this.draft
     },
     beforeRouteUpdate (to, from, next) {
-      let key = 'draft-' + this.conversationType + '-' + this.targetId
-      cache.set(key, this.replyText)
-      this.replyText = ''
+      if (this.replyText) {
+        let key = 'draft-' + this.conversationType + '-' + this.targetId
+        cache.set(key, this.replyText)
+        this.replyText = ''
+      }
       next()
     },
     beforeRouteLeave (to, from, next) {
-      let key = 'draft-' + this.conversationType + '-' + this.targetId
-      cache.set(key, this.replyText)
-      this.replyText = ''
+      if (this.replyText) {
+        let key = 'draft-' + this.conversationType + '-' + this.targetId
+        cache.set(key, this.replyText)
+        this.replyText = ''
+      }
       next()
     },
     methods: {
       back () {
         history.back()
-      },
-      atMember () {
-        console.log('---@---')
       },
       showDialogImage (imgUrl) {
         this.dialogImageUrl = imgUrl
@@ -179,7 +181,11 @@
                 nickname: member.nickname,
                 headimgurl: member.headimgurl
               })
+              if (this.userId != member.userId) {
+                this.chatNicknames.push(member.nickname)
+              }
             }
+            this.initAt(this.chatNicknames)
           })
         }
         this.$store.dispatch('getUserProfile').then(data => {
@@ -190,12 +196,28 @@
           })
         })
       },
+      initAt (data) {
+        $('#replyText').atwho({
+          at: "@",
+          limit: 3000,
+          data: data
+        })
+      },
       symbolToEmoji (symbol) {
         if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.symbolToEmoji) {
           return RongIMLib.RongIMEmoji.symbolToEmoji(symbol)
         } else {
           return symbol
         }
+      },
+      getAtArray(item){
+        let atArr = item.match(/@.*?\s/g)
+        let atMember = []
+        for (let at of atArr) {
+          let name = at.replace('@', '').replace(' ', '')
+
+        }
+        return atMember;
       },
       sendMessage () {
         let conversation = {
@@ -211,6 +233,8 @@
         if (conversation.message.content) {
           this.$store.dispatch('sendTextMsg', conversation).then(data => {
             this.replyText = ''
+            let key = 'draft-' + this.conversationType + '-' + this.targetId
+            cache.set(key, this.replyText)
             this.refreshChatroom()
           })
         }
@@ -297,18 +321,15 @@
       },
       'curConversation.newMsg': function (val, oldVal) {
         this.refreshChatroom()
-      },
-      replyText (val, oldVal) {
-        let reg = /\w[-\w.+]*@$/
-        if (reg.test(val)) {
-
-        }
       }
     }
   }
 </script>
-
+<style>
+  @import "../../assets/lib/at/css/jquery.atwho.min.css";
+</style>
 <style scoped rel="stylesheet/scss" lang="scss">
+
   .el-container {
     background-color: #f9fbfd;
     overflow: hidden;
@@ -403,6 +424,7 @@
         }
         .btn-send {
           margin-left: 5px;
+          padding: 15px 10px;
         }
       }
     }

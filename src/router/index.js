@@ -50,7 +50,11 @@ export default new Router({
       path: '/group-info/:groupId',
       name: 'GroupInfo',
       component: GroupInfo,
-      props: true
+      props: true,
+      meta: {
+        isManage: false,
+        roles: ['teacher', 'tutor']
+      }
     },
     {
       path: '/group-info/:groupId/manage',

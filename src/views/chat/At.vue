@@ -8,14 +8,6 @@
         </div>
       </li>
     </ul>
-    <el-select v-model="value" placeholder="请选择">
-      <el-option
-        v-for="item in options"
-        :key="item.value"
-        :label="item.label"
-        :value="item.value">
-      </el-option>
-    </el-select>
   </div>
 </template>
 
@@ -39,7 +31,7 @@
       filterMembers () {
         let filterMembers = {}
         for (let key of Object.keys(this.chatMembers)) {
-          if (this.chatMembers[key].nickname.toLowerCase().indexOf(this.keyword) !== -1) {
+          if (this.chatMembers[key].nickname.toLowerCase().indexOf(this.keyword.toLowerCase()) !== -1) {
             filterMembers[key] = this.chatMembers[key]
           }
         }
@@ -48,39 +40,7 @@
     },
     data () {
       return {
-        activeIndex: 0,
-        options: [{
-          value: '选项1',
-          label: '黄金糕'
-        }, {
-          value: '选项2',
-          label: '双皮奶'
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        },{
-          value: '选项6',
-          label: '黄金糕6'
-        }, {
-          value: '选项7',
-          label: '双皮奶7'
-        }, {
-          value: '选项8',
-          label: '蚵仔煎8'
-        }, {
-          value: '选项9',
-          label: '龙须面9'
-        }, {
-          value: '选项10',
-          label: '北京烤鸭10'
-        }],
-        value: ''
+        activeIndex: 0
       }
     },
     created () {
@@ -96,7 +56,9 @@
       })
       that.globalKeyDown(function (e) {
         console.log(e)
-        if (e.keyCode == 40 && that.activeIndex < Object.keys(that.filterMembers).length-1) {
+        if (e.keyCode == 27) {
+          that.$emit('update:visible', false)
+        } else if (e.keyCode == 40 && that.activeIndex < Object.keys(that.filterMembers).length-1) {
           that.activeIndex++
         } else if (e.keyCode == 38 && that.activeIndex > 0) {
           that.activeIndex--

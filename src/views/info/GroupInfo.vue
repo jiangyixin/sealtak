@@ -153,7 +153,7 @@
         this.$router.push({name: 'Bulletin', params: { groupId: this.groupId }})
       },
       toManage () {
-        this.$router.push({name: 'GroupInfoManage', params: { groupId: this.targetId }})
+        this.$router.push({name: 'GroupInfoManage', params: { groupId: this.groupId }})
       },
       back () {
         history.back()
