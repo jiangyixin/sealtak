@@ -3,7 +3,6 @@
     <div>
       <el-row class="tac">
         <el-col :span="24">
-          <!--<h5>默认颜色</h5>-->
           <el-menu
             default-active="1"
             class="el-menu-vertical"
@@ -21,7 +20,12 @@
               </template>
               <el-menu-item-group key="group">
                 <template v-for="(group, index) in filterGroups">
-                  <el-menu-item :route="{ name: 'GroupInfo', params: { groupId: group.groupId } }" :key="group.groupId" :index="group.groupId|toString">{{ group.groupName }}</el-menu-item>
+                  <el-menu-item :route="{ name: 'GroupInfo', params: { groupId: group.groupId } }" :key="group.groupId" :index="group.groupId|toString">
+                    <div class="contact-card">
+                      <img class="face" :src="group.groupHeadimgurl" alt="">
+                      <span>{{ group.groupName }}</span>
+                    </div>
+                  </el-menu-item>
                 </template>
               </el-menu-item-group>
             </el-submenu>
@@ -33,7 +37,12 @@
                 <el-menu-item-group :key="group.letter">
                   <template slot="title">{{ group.letter }}</template>
                   <template v-for="(friend, index) in group.data">
-                    <el-menu-item :route="{ name: 'UserInfo', params: { userId: friend.friendUserId } }" :key="friend.friendUserId" :index="friend.friendUserId|toString">{{ friend.nickname }}</el-menu-item>
+                    <el-menu-item :route="{ name: 'UserInfo', params: { userId: friend.friendUserId } }" :key="friend.friendUserId" :index="friend.friendUserId|toString">
+                      <div class="contact-card">
+                        <img class="face" :src="friend.headimgurl" alt="">
+                        <span>{{ friend.nickname }}</span>
+                      </div>
+                    </el-menu-item>
                   </template>
                 </el-menu-item-group>
               </template>
@@ -114,6 +123,14 @@
     background-color: #f5f8fc;
     /deep/ .el-menu-item.is-disabled {
       opacity: 1;
+    }
+    .contact-card {
+      .face {
+        width: 25px;
+        height: 25px;
+        overflow: hidden;
+        border-radius: 50%;
+      }
     }
   }
 

@@ -27,7 +27,7 @@
         <el-button type="text" @click="dialogFormVisible = true">添加新成员</el-button>
       </div>
       <ul class="group-member-list">
-        <li v-for="(member, index) in groupMembers" :key="member.userId" class="group-member-item">
+        <li v-for="(member, index) in sortGroupMembers(groupMembers)" :key="member.userId" class="group-member-item">
           <router-link :to="{name: 'UserInfo', params: {userId: member.userId}, query: {applyFrom: 'group', fromRemark: groupId}}" class="member-card">
             <div class="face"><img :src="member.headimgurl" alt=""></div>
             <div class="info">
@@ -98,6 +98,23 @@
       this.fetchGroupInfo()
     },
     methods: {
+      sortGroupMembers (groupMembers) {
+        let roleArr = []
+        let normalArr = []
+        for (let member of groupMembers) {
+          if (member.roleWeight > 0) {
+            roleArr.push(member)
+          } else {
+            normalArr.push(member)
+          }
+        }
+        if (normalArr.length > 0) {
+          normalArr = normalArr.sort(function(a, b) {
+            return a.nickname.localeCompare(b.nickname, 'zh-Hans-CN', {sensitivity: 'accent'});
+          })
+        }
+        return roleArr.concat(normalArr)
+      },
       fetchGroupInfo () {
         this.$store.dispatch('getGroupInfo', this.groupId).then(data => {
           this.groupInfo = data

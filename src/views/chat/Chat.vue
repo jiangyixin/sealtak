@@ -197,11 +197,11 @@
         })
       },
       initAt (data) {
-        $('#replyText').atwho({
-          at: "@",
-          limit: 3000,
-          data: data
-        })
+//        $('#replyText').atwho({
+//          at: "@",
+//          limit: 3000,
+//          data: data
+//        })
       },
       symbolToEmoji (symbol) {
         if (RongIMLib.RongIMEmoji && RongIMLib.RongIMEmoji.symbolToEmoji) {
@@ -307,6 +307,8 @@
     watch: {
       targetId (val, oldVal) {
         this.page.first = true
+        this.chatNicknames = []
+        this.chatMembers = {}
         let conversation = {
           conversationType: this.conversationType,
           targetId: this.targetId,

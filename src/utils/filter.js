@@ -15,16 +15,16 @@ export function groupByZh (array) {
 
   let segs = [];
   let curr;
-  letters.forEach(function(item,i){
+  letters.forEach(function(item,i) {
     curr = {letter: item, data:[]};
-    array.forEach(function(item2){
+    array.forEach(function(item2) {
       if((!zh[i-1] || zh[i-1].localeCompare(item2.nickname, 'zh-Hans-CN', {sensitivity: 'accent'}) <= 0) && item2.nickname.localeCompare(zh[i], 'zh-Hans-CN', {sensitivity: 'accent'}) === -1) {
         curr.data.push(item2);
       }
     });
     if(curr.data.length) {
       segs.push(curr);
-      curr.data.sort(function(a, b){
+      curr.data.sort(function(a, b) {
         return a.nickname.localeCompare(b.nickname, 'zh-Hans-CN', {sensitivity: 'accent'});
       });
     }
