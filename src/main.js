@@ -23,6 +23,11 @@ Vue.prototype.globalClick = function (callback) {
     callback(e)
   })
 }
+Vue.prototype.globalKeyDown = function (callback) {
+  document.addEventListener('keydown', function (e) {
+    callback(e)
+  })
+}
 
 RongIMLib.RongIMEmoji.init()
 RongIMLib.RongIMVoice.init()

@@ -37,6 +37,7 @@
             v-model="replyText">
           </el-input>
           <el-button class="btn-send" type="text" @click="sendMessage">发送</el-button>
+          <at :visible.sync="showAt" :chatMembers="chatMembers" :active="0"></at>
         </div>
       </div>
     </el-footer>
@@ -50,6 +51,7 @@
   import Emojo from './Emoji.vue'
   import RcImage from './Image.vue'
   import Message from './Message.vue'
+  import At from './At.vue'
   import { mapGetters } from 'vuex'
   let moment = require('moment')
   import cache from '../../utils/sessionStorage'
@@ -57,7 +59,7 @@
   export default {
     name: 'Chat',
     components: {
-      Message, Emojo, RcImage
+      Message, Emojo, RcImage, At
     },
     props: {
       conversationType: {
@@ -84,7 +86,8 @@
         chatMembers: {},
         showEmojo: false,
         previewDialogVisible: false,
-        dialogImageUrl: ''
+        dialogImageUrl: '',
+        showAt: false
       }
     },
     computed: {
@@ -294,6 +297,12 @@
       },
       'curConversation.newMsg': function (val, oldVal) {
         this.refreshChatroom()
+      },
+      replyText (val, oldVal) {
+        let reg = /\w[-\w.+]*@$/
+        if (reg.test(val)) {
+
+        }
       }
     }
   }

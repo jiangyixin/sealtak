@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import cache from '../utils/sessionStorage'
 import store from '../store'
 import { Message, MessageBox } from 'element-ui'
 
@@ -17,6 +17,9 @@ service.interceptors.request.use(
     // }
     config.headers['token'] = store.getters.token
     config.headers['userId'] = store.getters.userId
+    if (!cache.has('is-login')) {
+      config.headers['token-login'] = 1
+    }
     return config
   },
   error => {
@@ -43,6 +46,9 @@ service.interceptors.response.use(
         duration: 5 * 1000
       })
       return Promise.reject(res.data)
+    }
+    if (!cache.has('is-login')) {
+      cache.set('is-login', 1)
     }
     return res.data.res
   },
